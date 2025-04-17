@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+<!-- fragments/header.html -->
+<div th:fragment="siteHeader">
+  <nav class="navbar">
+    <a th:href="@{/}" class="logo">Mi<span>Ecommerce</span></a>
+    <ul class="nav-links">
+      <li><a th:href="@{/}">Inicio</a></li>
+      <li><a th:href="@{/products}">Productos</a></li>
+      <li><a th:href="@{/about}">Nosotros</a></li>
+      <li><a th:href="@{/contact}">Contacto</a></li>
+    </ul>
+    <div class="search-login">
+      <div class="search-bar">
+        <input type="text" placeholder="Buscar productos...">
+        <i class="fas fa-search"></i>
+      </div>
+      <button id="login-btn" class="btn">Iniciar Sesión</button>
+    </div>
+  </nav>
+</div>
 
-</body>
-</html>

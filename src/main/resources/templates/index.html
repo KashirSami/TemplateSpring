@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Mi Ecommerce - Inicio</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/main.js}" defer></script>
 </head>
 <body>
+<!-- Header (se puede incluir con JS) -->
+<header th:replace="fragments/header :: siteHeader"></header>
 
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Bienvenido a nuestra tienda</h1>
+        <p>Descubre los mejores productos al mejor precio</p>
+        <a th:href="@{/products}" class="btn">Ver productos</a>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="featured-products">
+    <h2>Productos Destacados</h2>
+    <div class="products-container" id="featured-products">
+        <!-- Productos se cargarán con JS -->
+    </div>
+</section>
+
+<!-- Footer (se puede incluir con JS) -->
+<footer th:replace="fragments/footer :: siteFooter"></footer>
 </body>
 </html>
