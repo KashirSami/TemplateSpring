@@ -4,7 +4,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 # Firebase
-/src/main/resources/proyectofinal.json
 /proyectofinal.json
 
 ### STS ###
