@@ -2,7 +2,7 @@ package com.template.template.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
-public class SocialLoginController {
+/*public class SocialLoginController {
     @GetMapping("/oauth2/loginSuccess")
     public String loginExitoso(OAuth2AuthenticationToken authentication, Model model) {
         Map<String, Object> datos = authentication.getPrincipal().getAttributes();
@@ -14,4 +14,4 @@ public class SocialLoginController {
         model.addAttribute("nombre", nombre);
         return "dashboard"; // página de bienvenida o home
     }
-}
+}*/
