@@ -1,4 +1,4 @@
 package com.template.template.model;
 
-public class Usuario {
+public class User {
 }

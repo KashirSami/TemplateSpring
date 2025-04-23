@@ -686,4 +686,17 @@ footer {
             width: 100%;
         }
     }
+
+    /* Register */
+    .auth-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    .form-error {
+        color: #dc3545;
+        font-size: 0.875em;
+    }
 }
