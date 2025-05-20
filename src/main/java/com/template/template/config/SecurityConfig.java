@@ -21,10 +21,6 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/", true)  
                         .permitAll()
                 )
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
-                )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                 );

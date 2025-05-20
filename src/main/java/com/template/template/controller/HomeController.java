@@ -11,11 +11,7 @@ public class HomeController {
 
     //Redirige a la pagina principal
     @GetMapping("/")
-    public String home(@AuthenticationPrincipal OAuth2User user, Model model) {
-        if (user != null) {
-            model.addAttribute("nombre", user.getAttribute("name"));
-            model.addAttribute("email", user.getAttribute("email"));
-        }
+    public String home(Model model) {
         return "index";
     }
 }
