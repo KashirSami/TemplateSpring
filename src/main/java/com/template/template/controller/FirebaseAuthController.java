@@ -10,20 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FirebaseAuthController {
     @Autowired
     private FirebaseAuthService authService;
 
-    //Registro de usuarios
-    @GetMapping("/auth/register")
+    //Registro de usuarios en firebase
+    @GetMapping("/register")
     public String showRegisterForm() {
-        return "auth/register";
+        return "/register";
     }
 
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public String procesarRegistro(@ModelAttribute RegisterRequest request, Model model) {
         String resultado = authService.registrarUsuario(request);
 
@@ -31,13 +30,13 @@ public class FirebaseAuthController {
             return "redirect:/register?success";
         } else {
             model.addAttribute("errorMessage", resultado);
-            return "auth/register";
+            return "/register";
         }
     }
 
 
     //Login de usuarios
-    @GetMapping("/auth/login")
+    @GetMapping("/login")
     public String showLoginForm() {
         return "login";
     }

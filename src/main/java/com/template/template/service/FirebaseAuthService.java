@@ -42,12 +42,6 @@ public class FirebaseAuthService {
     }
 
     public boolean loginUser(String email, String password) throws FirebaseAuthException {
-        // NOTA: Firebase Admin SDK NO permite verificar contraseñas directamente por seguridad
-        // Alternativas:
-        // 1. Autenticación se hace en frontend con Firebase JS SDK (como hiciste antes)
-        // 2. Backend verifica con Firebase REST API (aquí te muestro cómo)
-
-        // Esta opción usa Firebase REST API para verificar las credenciales:
         return FirebaseRestLogin.loginWithEmailPassword(email, password);
     }
 }

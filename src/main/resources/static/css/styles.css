@@ -21,6 +21,8 @@
     --font-secondary: 'Roboto', sans-serif;
     --text-base-size: 1rem;
     --text-scale-ratio: 1.2;
+    --mobile-breakpoint: 768px;
+    --tablet-breakpoint: 1024px;
 }
 
 body {

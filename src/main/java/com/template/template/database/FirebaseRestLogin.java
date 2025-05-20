@@ -6,6 +6,7 @@ import java.net.URL;
 
 public class FirebaseRestLogin {
 
+    //Comprueba que el usuario exista para hacer el login
     public static boolean loginWithEmailPassword(String email, String password) {
         try {
             String apiKey = "AIzaSyBiYqQFhr84FjuoXmdKNxe57AFuZNyV3Sk";

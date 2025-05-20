@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
+
+    //Redirige a la pagina principal
     @GetMapping("/")
     public String home(@AuthenticationPrincipal OAuth2User user, Model model) {
         if (user != null) {

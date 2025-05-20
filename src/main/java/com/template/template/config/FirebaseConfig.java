@@ -16,13 +16,12 @@ public class FirebaseConfig {
 
     @PostConstruct
     public void initialize() throws IOException {
-        // Ruta al archivo JSON descargado de Firebase (ajústala)
         FileInputStream serviceAccount =
                 new FileInputStream("src/main/resources/proyectofinal.json");
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .setDatabaseUrl("https://TU-PROYECTO.firebaseio.com") // Reemplaza con tu URL
+                .setDatabaseUrl("https://TU-PROYECTO.firebaseio.com")
                 .build();
 
         FirebaseApp.initializeApp(options);

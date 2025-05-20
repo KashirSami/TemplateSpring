@@ -8,14 +8,12 @@
 </head>
 <body>
 <h2>Iniciar Sesión</h2>
-<form th:action="@{auth/login}" method="post">
+<form th:action="@{/login}" method="post">
     <input type="email" name="email" placeholder="Correo" required>
     <input type="password" name="password" placeholder="Contraseña" required>
     <button type="submit">Login</button>
 </form>
-<a th:href="@{/oauth2/authorization/google}" class="btn btn-danger w-100">
-    <button>Iniciar sesión con Google</button>
-</a>
+<p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
 <p th:if="${error}" th:text="${error}"></p>
 </body>
 </html>
