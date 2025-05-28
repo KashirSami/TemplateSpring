@@ -1,17 +1,50 @@
 package com.template.template.model;
 
-import lombok.Data;
+import com.alibaba.excel.annotation.ExcelProperty;
 
-import java.util.Date;
-
-@Data
 public class Product {
+
+    @ExcelProperty("ID")
     private String id;
-    private String nombre;
-    private String descripcion;
-    private double valor;
-    private String categoria;
-    private int stock;
-    private String imagenUrl;
-    private Date fechaCreacion;
+
+    @ExcelProperty("Name")
+    private String name;
+
+    @ExcelProperty("Description")
+    private String description;
+
+    @ExcelProperty("Price")
+    private double price;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }
