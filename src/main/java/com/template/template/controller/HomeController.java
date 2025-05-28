@@ -1,17 +1,39 @@
 package com.template.template.controller;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.UserRecord;
+import com.template.template.service.FirebaseAuthService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
 @Controller
 public class HomeController {
 
-    //Redirige a la pagina principal
+    @Autowired
+    private FirebaseAuthService authService;
+
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(HttpSession session, Model model) {
+        // Obtiene el email del usuario de la sesión
+        String userEmail = (String) session.getAttribute("userEmail");
+
+        if (userEmail != null) {
+            try {
+                // Obtiene los datos del usuario de Firebase
+                UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmail(userEmail);
+
+                // Añade los datos del usuario al modelo
+                model.addAttribute("userName", userRecord.getDisplayName());
+                model.addAttribute("userEmail", userRecord.getEmail());
+                model.addAttribute("userPhoto", userRecord.getPhotoUrl());
+            } catch (FirebaseAuthException e) {
+                model.addAttribute("error", "Error al cargar datos del usuario");
+            }
+        }
+
         return "index";
     }
 }
