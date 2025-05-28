@@ -12,5 +12,7 @@ public interface FirebaseStorageService {
 
     void uploadProduct(Product product);
     List<Product> searchProducts(String query) throws ExecutionException, InterruptedException;
-    void updateProduct(String id, Product product) throws ExecutionException, InterruptedException;
+    void updateProduct(Product product) throws ExecutionException, InterruptedException;
+    void saveProduct(Product product) throws ExecutionException, InterruptedException;
+    void deleteProduct(String id) throws ExecutionException, InterruptedException;
 }
