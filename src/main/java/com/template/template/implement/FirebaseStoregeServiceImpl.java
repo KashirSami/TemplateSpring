@@ -1,6 +1,7 @@
 package com.template.template.implement;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
@@ -47,10 +48,24 @@ public class FirebaseStoregeServiceImpl implements FirebaseStorageService {
     }
 
     @Override
-    public void updateProduct(String id, Product product) throws ExecutionException, InterruptedException {
+    public void updateProduct(Product product) throws ExecutionException, InterruptedException {
         ApiFuture<WriteResult> future = firestore
                 .collection("products")
-                .document(id)
+                .document(product.getId())
                 .set(product);
+    }
+
+    @Override
+    public void saveProduct(Product product) throws ExecutionException, InterruptedException {
+        DocumentReference docRef = firestore
+                .collection("products")
+                .document(product.getId());
+        ApiFuture<WriteResult> writeResult = docRef.set(product);
+        System.out.println("Product saved with id: " + writeResult.get().getUpdateTime());
+    }
+
+    @Override
+    public void deleteProduct(String id) throws ExecutionException, InterruptedException {
+
     }
 }
