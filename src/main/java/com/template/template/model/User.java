@@ -1,4 +1,4 @@
 package com.template.template.model;
 
-public class Producto {
+public class User {
 }
