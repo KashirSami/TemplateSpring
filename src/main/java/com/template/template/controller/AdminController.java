@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,55 +19,85 @@ import java.util.concurrent.ExecutionException;
 
 @Controller
 @RequestMapping("/admin")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
-    @Autowired
-    private FirebaseStorageService storageService;
+
+    private final FirebaseStorageService storageService;
+    private final ExcelService excelService;
+    private final AdminService adminService;
 
     @Autowired
-    private ExcelService excelService;
+    public AdminController(FirebaseStorageService storageService,
+                           ExcelService excelService,
+                           AdminService adminService) {
+        this.storageService = storageService;
+        this.excelService  = excelService;
+        this.adminService  = adminService;
+    }
 
-    @Autowired
-    private AdminService adminService;
-
-    @PreAuthorize("hasAuthority('ADMIN')")
+    // 1. Mostrar dashboard con todos los productos
     @GetMapping("/dashboard")
-    public String adminDashboard(Authentication authentication) {
-        System.out.println("Roles del usuario: " + authentication.getAuthorities()); // Debe mostrar "[ADMIN]"
+    public String dashboard(@RequestParam(value="success", required=false) String success,
+                            @RequestParam(value="updated", required=false) String updated,
+                            Model model) throws Exception {
+        List<Product> all = storageService.getAllProducts();
+        model.addAttribute("products", all);
+        if (success!=null)  model.addAttribute("msg","Importación completada");
+        if (updated!=null)  model.addAttribute("msg","Producto actualizado");
         return "admin/dashboard";
     }
 
-
-    @PostMapping("/upload")
+    // 2. Importar Excel
+    @PostMapping("/dashboard/upload")
     public String uploadExcel(@RequestParam("file") MultipartFile file,
-                              Authentication authentication) throws IOException {
-        if (!adminService.isAdmin(authentication.getName())) {
-            return "redirect:/access-denied";
-        }
-
+                              RedirectAttributes attrs) throws IOException {
         excelService.processExcel(file);
-        return "redirect:/dashboard?success";
+        attrs.addAttribute("success","ok");
+        return "redirect:/admin/dashboard?success";
     }
 
-    @GetMapping("/search")
-    public String searchProduct(@RequestParam String query, Model model) {
-        List<Product> results = null;
-        try {
+    // 3. Buscar / filtrar
+    @GetMapping("/dashboard/search")
+    public String search(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String category,
+            Model model
+    ) throws Exception {
+        List<Product> results;
+        if (query != null && !query.isBlank()) {
             results = storageService.searchProducts(query);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
+        } else if (category != null && !category.isBlank()) {
+            results = storageService.filterByCategory(category);
+        } else {
+            results = storageService.getAllProducts();
         }
-        model.addAttribute("products", results);
-        return "/search-results";
+        model.addAttribute("productos", results);
+        return "admin/dashboard";
     }
 
-    @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable String id, @ModelAttribute Product product) {
-        try {
-            storageService.updateProduct(id, product);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        return "redirect:/dashboard?updated";
+    // 4. Mostrar formulario de edición
+    @GetMapping("/dashboard/edit/{id}")
+    public String editForm(@PathVariable String id, Model model) throws Exception {
+        Product p = storageService.getProductById(id);
+        model.addAttribute("productos", p);
+        return "admin/edit-product";
+    }
+
+    // 5. Guardar cambios
+    @PostMapping("/dashboard/update")
+    public String update(@ModelAttribute Product product,
+                         RedirectAttributes attrs) throws Exception {
+        storageService.updateProduct(product);
+        attrs.addAttribute("updated","ok");
+        return "redirect:/admin/dashboard?updated";
+    }
+
+    @GetMapping("/dashboard/filter")
+    public String filterByCategory(@RequestParam String category, Model model) throws Exception {
+        List<Product> filtrados = storageService.filterByCategory(category);
+        model.addAttribute("productos", filtrados);
+        return "admin/dashboard";
     }
 }
+

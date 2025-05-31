@@ -13,40 +13,42 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class ExcelServiceImpl implements ExcelService {
 
+    
+    private final FirebaseStorageService storageService;
+
     @Autowired
-    private FirebaseStorageService storageService;
+    public ExcelServiceImpl(FirebaseStorageService storageService) {
+        this.storageService = storageService;
+    }
+
 
     @Override
-    public void processExcel(MultipartFile fileName) throws IOException {
-        try (InputStream is = fileName.getInputStream()) {
-            EasyExcel.read(is, Product.class, new ReadListener<ProductRow>() {
+    public void processExcel(MultipartFile file) throws IOException {
+        try (InputStream is = file.getInputStream()) {
+            EasyExcel.read(is, ProductRow.class, new ReadListener<ProductRow>() {
                 @Override
-                public void invoke(ProductRow product, AnalysisContext analysisContext) {
+                public void invoke(ProductRow row, AnalysisContext analysisContext) {
                     Product p = new Product();
-                    p.setId(product.getId());
-                    p.setName(product.getName());
-                    p.setDescription(product.getDescription());
-                    p.setPrice(product.getPrice());
+                    p.setId(row.getId());
+                    p.setNombre(row.getNombre());
+                    p.setDescripcion(row.getDescripcion());
+                    p.setCategoria(row.getCategoria());
+                    p.setPrecio(row.getPrecio());
+                    p.setStock(row.getStock());
                     try {
                         storageService.saveProduct(p);
-                    } catch (ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error guardando producto " + p.getNombre(), e);
                     }
-
                 }
-
                 @Override
-                public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-
-                }
+                public void doAfterAllAnalysed(AnalysisContext ctx) { }
             }).sheet().doRead();
-
         }
-
     }
 }
+

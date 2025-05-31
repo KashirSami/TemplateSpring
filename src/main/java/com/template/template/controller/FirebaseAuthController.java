@@ -81,9 +81,7 @@ public class FirebaseAuthController {
                 context.setAuthentication(auth);
                 SecurityContextHolder.setContext(context);
 
-                // ⚠️ ESTA LÍNEA ES CRUCIAL
                 session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-
                 System.out.println("Roles asignados: " + context.getAuthentication().getAuthorities());
 
                 return "redirect:admin/dashboard";
@@ -101,7 +99,6 @@ public class FirebaseAuthController {
                 SecurityContextHolder.setContext(context);
 
                 session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-
                 session.setAttribute("userRole", "USER");
                 session.setAttribute("userEmail", username);
 

@@ -7,14 +7,22 @@ public class ProductRow {
     @ExcelProperty("ID")
     private String id;
 
-    @ExcelProperty("Name")
-    private String name;
+    @ExcelProperty("nombre")
+    private String nombre;
 
-    @ExcelProperty("Description")
-    private String description;
+    @ExcelProperty("descripcion")
+    private String descripcion;
 
-    @ExcelProperty("Value")
-    private double price;
+    @ExcelProperty("categoria")
+    private String categoria;
+
+    @ExcelProperty("precio")
+    private double precio;
+
+    @ExcelProperty("stock")
+    private int stock;
+
+
 
     public ProductRow() {
     }
@@ -27,28 +35,44 @@ public class ProductRow {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescripcion(String description) {
+        this.descripcion = description;
     }
 
-    public double getPrice() {
-        return price;
+    public double getPrecio() {
+        return precio;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }
 

@@ -3,67 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <title>Panel de Administración</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/admin.css}">
 </head>
 <body>
-
 <div class="admin-container">
 
   <header class="admin-header">
     <h1>Panel de Administración</h1>
   </header>
 
+  <!-- Mensaje flash -->
+  <div th:if="${msg}" class="alert success" th:text="${msg}"></div>
+
+  <!-- 1) Subir Excel -->
   <section class="upload-section">
     <h2>Importar Productos</h2>
-    <form th:action="@{/admin/upload}" method="post" enctype="multipart/form-data">
-      <div class="form-group">
-        <input type="file" name="file" accept=".xlsx,.xls" required>
-        <button type="submit" class="btn">Subir Excel</button>
-      </div>
+    <form th:action="@{/admin/dashboard/upload}" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".xls,.xlsx" required>
+      <button type="submit" class="btn">Subir Excel</button>
     </form>
-    <p th:if="${param.success}" class="alert success">Productos importados correctamente.</p>
   </section>
 
+  <!-- 2) Formulario de búsqueda (opcional) -->
   <section class="search-section">
-    <h2>Buscar Producto</h2>
-    <form th:action="@{/admin/search}" method="get">
-      <div class="form-group">
-        <input type="text" name="query" placeholder="Nombre del producto" required>
-        <button type="submit" class="btn">Buscar</button>
-      </div>
+    <h2>Buscar / Filtrar</h2>
+    <form th:action="@{/admin/dashboard}" method="get">
+      <input type="text" name="query" placeholder="Nombre..." />
+      <input type="text" name="category" placeholder="Categoría..." />
+      <button type="submit" class="btn">Filtrar</button>
     </form>
   </section>
 
-  <section th:if="${products != null}" class="search-results">
-    <h3>Resultados de la búsqueda</h3>
-    <div class="table-container">
-      <table>
-        <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Valor</th>
-          <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="product : ${products}">
-          <td th:text="${product.id}">ID</td>
-          <td th:text="${product.nombre}">Nombre</td>
-          <td th:text="${product.descripcion}">Descripción</td>
-          <td th:text="${'$' + #numbers.formatDecimal(product.valor, 1, 2)}">Valor</td>
-          <td>
-            <a th:href="@{/admin/edit/{id}(id=${product.id})}" class="btn btn-edit">Editar</a>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+  <!-- 3) Tabla de productos -->
+  <section class="table-container" th:if="${products}">
+    <h2>Productos</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th><th>Nombre</th><th>Descripción</th>
+        <th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="p : ${products}">
+        <td th:text="${p.id}">ID</td>
+        <td th:text="${p.nombre}">Nombre</td>
+        <td th:text="${p.descripcion}">Descripción</td>
+        <td th:text="${p.categoria}">Categoría</td>
+        <td th:text="${#numbers.formatDecimal(p.precio, 1, 2)}">0.00</td>
+        <td th:text="${p.stock}">0</td>
+        <td>
+          <form th:action="@{/admin/dashboard/update}" method="post" style="display:inline;">
+            <input type="hidden" th:name="id" th:value="${p.id}"/>
+            <!-- aquí podrías abrir un modal o una vista de edición -->
+            <button type="submit" class="btn btn-edit">Editar</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
   </section>
-
+  <!-- Footer -->
+  <footer th:replace="fragments/footer :: siteFooter"></footer>
 </div>
-
 </body>
 </html>
+
