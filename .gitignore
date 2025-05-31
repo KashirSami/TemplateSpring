@@ -4,7 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 # Firebase
-/src/main/resources/proyectofinal.json
+/src/main/resources/proyectofinal-ca5b2.json
 
 ### STS ###
 .apt_generated

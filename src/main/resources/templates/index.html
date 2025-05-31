@@ -10,6 +10,15 @@
 <!-- Header (se puede incluir con JS) -->
 <header th:replace="fragments/header :: siteHeader"></header>
 
+<div th:if="${userEmail}" class="user-profile">
+    <div class="profile-card">
+        <img th:src="${userPhoto ?: '/images/default-profile.png'}"
+             alt="Foto de perfil" class="profile-pic">
+        <h2 th:text="${userName} ?: 'Usuario'"></h2>
+        <p th:text="${userEmail}"></p>
+    </div>
+</div>
+
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">

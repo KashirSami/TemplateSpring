@@ -1,19 +1,178 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<meta charset="UTF-8">
 <head>
-    <title>Login</title>
-    <script th:src="@{/js/app.js}"></script>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión | Mi Ecommerce</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para el login que mantienen tu estilo principal */
+        .login-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://ejemplo.com/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 450px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-title {
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .login-subtitle {
+            color: var(--gray-color);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .login-footer {
+            margin-top: 1.5rem;
+            color: var(--gray-color);
+        }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .login-footer a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #f8f9fa;
+            border-left: 4px solid;
+        }
+
+        .alert-danger {
+            border-left-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .alert-success {
+            border-left-color: #2ecc71;
+            color: #2ecc71;
+        }
+    </style>
 </head>
 <body>
-<h2>Iniciar Sesión</h2>
-<form th:action="@{/login}" method="post">
-    <input type="email" name="email" placeholder="Correo" required>
-    <input type="password" name="password" placeholder="Contraseña" required>
-    <button type="submit">Login</button>
-</form>
-<p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
-<p th:if="${error}" th:text="${error}"></p>
+<!-- Header -->
+<header th:replace="fragments/header :: siteHeader"></header>
+
+<!-- Hero Section modificada para login -->
+<section class="login-section">
+    <div class="login-card">
+        <h1 class="login-title">Inicia Sesión</h1>
+        <p class="login-subtitle">Ingresa tus credenciales para acceder</p>
+
+        <!-- Mensajes de estado -->
+        <div th:if="${param.error}" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> Usuario o contraseña incorrectos
+        </div>
+
+        <div th:if="${param.logout}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i> Has cerrado sesión correctamente
+        </div>
+
+        <!-- Formulario -->
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-envelope"></i> Correo Electrónico</label>
+                <input type="email" id="username" name="username" class="form-control" placeholder="tucorreo@ejemplo.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Ingresar
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <p>¿No tienes cuenta? <a th:href="@{/register}">Regístrate aquí</a></p>
+            <p><a th:href="@{/password-reset}">¿Olvidaste tu contraseña?</a></p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="fragments/footer :: siteFooter"></footer>
+
+<script th:src="@{/js/app.js}"></script>
 </body>
 </html>

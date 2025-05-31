@@ -13,9 +13,14 @@
         <input type="text" placeholder="Buscar productos...">
         <i class="fas fa-search"></i>
       </div>
-      <form th:action="@{/login}" method="get">
-        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-      </form>
+    </div>
+    <div th:if="${session.userEmail}" class="user-menu">
+      <span th:text="${session.userEmail}"></span>
+      <a href="/logout" class="btn">Cerrar sesión</a>
+    </div>
+    <div th:unless="${session.userEmail}" class="auth-buttons">
+      <a href="/login" class="btn">Iniciar sesión</a>
+      <a href="/register" class="btn btn-outline">Registrarse</a>
     </div>
   </nav>
 </div>

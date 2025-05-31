@@ -701,4 +701,105 @@ footer {
         color: #dc3545;
         font-size: 0.875em;
     }
+    /* Admin */
+    .admin-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .upload-section, .search-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-edit {
+        padding: 6px 12px;
+        background-color: #f39c12;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .success {
+        color: #27ae60;
+        margin-top: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    /* Session usuario*/
+    .user-profile {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+    }
 }

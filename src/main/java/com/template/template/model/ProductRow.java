@@ -2,18 +2,21 @@ package com.template.template.model;
 
 import com.alibaba.excel.annotation.ExcelProperty;
 
-public class Product {
+public class ProductRow {
 
     @ExcelProperty("ID")
     private String id;
 
-    @ExcelProperty("Name")
+    @ExcelProperty("nombre")
     private String nombre;
 
-    @ExcelProperty("Description")
+    @ExcelProperty("descripcion")
     private String descripcion;
 
-    @ExcelProperty("Price")
+    @ExcelProperty("categoria")
+    private String categoria;
+
+    @ExcelProperty("precio")
     private double precio;
 
     @ExcelProperty("stock")
@@ -21,8 +24,8 @@ public class Product {
 
 
 
-    @ExcelProperty("categoria")
-    private String categoria;
+    public ProductRow() {
+    }
 
     public String getId() {
         return id;
@@ -44,8 +47,8 @@ public class Product {
         return descripcion;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescripcion(String description) {
+        this.descripcion = description;
     }
 
     public double getPrecio() {
@@ -56,14 +59,6 @@ public class Product {
         this.precio = precio;
     }
 
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
     public String getCategoria() {
         return categoria;
     }
@@ -71,4 +66,14 @@ public class Product {
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 }
+
+
