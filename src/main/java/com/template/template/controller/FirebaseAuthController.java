@@ -4,6 +4,7 @@ import com.template.template.database.FirebaseRestLogin;
 import com.template.template.handler.AdminValidator;
 import com.template.template.model.RegisterRequest;
 import com.template.template.service.FirebaseAuthService;
+import com.template.template.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class FirebaseAuthController {
     @Autowired
     private AdminValidator adminValidator;
 
+    @Autowired
+    private UserService userService;
+
     // Registro de usuarios
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
@@ -42,13 +46,27 @@ public class FirebaseAuthController {
     @PostMapping("/register")
     public String processRegistration(@ModelAttribute RegisterRequest request,
                                       Model model) {
-        String result = authService.registerUser(request);
-        if ("success".equals(result)) {
-            return "redirect:/login?success";
-        } else {
+        if (!request.getEmail().equals(request.getConfirmEmail())) {
+            model.addAttribute("errorMessage", "Los correos no coinciden.");
+            return "register";
+        }
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            model.addAttribute("errorMessage", "Las contraseñas no coinciden.");
+            return "register";
+        }
+
+        String result = userService.registerUser(
+                request.getNombre(),
+                request.getEmail(),
+                request.getPassword(),
+                request.getTelefono()
+        );
+        if (!"success".equals(result)) {
             model.addAttribute("errorMessage", result);
             return "register";
         }
+
+        return "redirect:/";
     }
 
     // Login para usuarios y admin
