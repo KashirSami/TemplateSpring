@@ -6,7 +6,6 @@ import com.template.template.service.ExcelService;
 import com.template.template.service.FirebaseStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -25,26 +24,47 @@ public class AdminController {
 
     private final FirebaseStorageService storageService;
     private final ExcelService excelService;
-    private final AdminService adminService;
-
     @Autowired
     public AdminController(FirebaseStorageService storageService,
-                           ExcelService excelService,
-                           AdminService adminService) {
+                           ExcelService excelService) {
         this.storageService = storageService;
         this.excelService  = excelService;
-        this.adminService  = adminService;
+
     }
 
     // 1. Mostrar dashboard con todos los productos
     @GetMapping("/dashboard")
-    public String dashboard(@RequestParam(value="success", required=false) String success,
-                            @RequestParam(value="updated", required=false) String updated,
-                            Model model) throws Exception {
-        List<Product> all = storageService.getAllProducts();
-        model.addAttribute("products", all);
-        if (success!=null)  model.addAttribute("msg","Importación completada");
-        if (updated!=null)  model.addAttribute("msg","Producto actualizado");
+    public String dashboard(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String category,
+            @RequestParam(value = "success", required = false) String successFlag,
+            @RequestParam(value = "updated", required = false) String updatedFlag,
+            Model model
+    ) throws Exception {
+        List<Product> productos;
+
+        if (query != null && !query.isBlank()
+                && category != null && !category.isBlank()) {
+            productos = storageService.searchByNameAndCategory(query, category);
+        }
+        else if (query != null && !query.isBlank()) {
+            productos = storageService.searchProducts(query);
+        }
+        else if (category != null && !category.isBlank()) {
+            productos = storageService.filterByCategory(category);
+        }
+        else {
+            productos = storageService.getAllProducts();
+        }
+
+        model.addAttribute("products", productos);
+        model.addAttribute("isAdmin", true);
+
+        if (successFlag != null)  model.addAttribute("msgSuccess", "Excel importado correctamente.");
+        if (updatedFlag != null)  model.addAttribute("msgSuccess", "Producto actualizado correctamente.");
+
+        model.addAttribute("selectedQuery",    query == null ? "" : query);
+        model.addAttribute("selectedCategory", category == null ? "" : category);
         return "admin/dashboard";
     }
 
@@ -80,7 +100,7 @@ public class AdminController {
     @GetMapping("/dashboard/edit/{id}")
     public String editForm(@PathVariable String id, Model model) throws Exception {
         Product p = storageService.getProductById(id);
-        model.addAttribute("productos", p);
+        model.addAttribute("product", p);
         return "admin/edit-product";
     }
 

@@ -6,131 +6,63 @@
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<!-- Header -->
-<header th:replace="fragments/header :: siteHeader"></header>
+<header th:replace="~{fragments/header :: siteHeader}"></header>
 
-<!-- Products Section -->
 <section class="products-page">
     <div class="container">
         <div class="products-header">
             <h1>Nuestros Productos</h1>
             <div class="products-controls">
-                <div class="sort-options">
-                    <label for="sort">Ordenar por:</label>
-                    <select id="sort">
-                        <option value="default">Predeterminado</option>
-                        <option value="price-asc">Precio: Menor a Mayor</option>
-                        <option value="price-desc">Precio: Mayor a Menor</option>
-                        <option value="name-asc">Nombre: A-Z</option>
-                        <option value="name-desc">Nombre: Z-A</option>
+                <form th:action="@{/products}" method="get" class="search-form">
+                    <input
+                            type="text"
+                            name="query"
+                            placeholder="Buscar por nombre…"
+                            th:value="${param.query}" />
+                    <button type="submit" class="btn">Buscar</button>
+                </form>
+
+                <form th:action="@{/products}" method="get" class="filter-form">
+                    <select name="category">
+                        <option
+                                value="all"
+                                th:selected="${param.category == 'all'}">
+                            Todas las categorías
+                        </option>
+                        <option
+                                value="Electrónica"
+                                th:selected="${param.category == 'Electrónica'}">
+                            Electrónica
+                        </option>
+                        <option
+                                value="Deportes"
+                                th:selected="${param.category == 'Deportes'}">
+                            Deportes
+                        </option>
+                        <option
+                                value="Ropa"
+                                th:selected="${param.category == 'Ropa'}">
+                            Ropa
+                        </option>
                     </select>
-                </div>
-                <div class="filter-options">
-                    <label for="category">Filtrar por categoría:</label>
-                    <select id="category">
-                        <option value="all">Todas las categorías</option>
-                        <option value="Electrónicos">Electrónicos</option>
-                        <option value="Deportes">Deportes</option>
-                        <option value="Accesorios">Accesorios</option>
-                    </select>
-                </div>
+                    <button type="submit" class="btn">Filtrar</button>
+                </form>
             </div>
         </div>
 
-        <div class="products-grid" id="products-grid">
-            <!-- Los productos se cargarán con JavaScript -->
+        <div class="products-grid" id="products-grid-public">
+            <!-- 1) th:each en un contenedor separado -->
+            <div th:each="product : ${products}">
+                <!-- 2) dentro, reemplaza esta etiqueta por el fragmento, pasándole “product” -->
+                <div
+                        th:replace="~{fragments/product-card :: productCard(product=${product}, isAdmin=${isAdmin})}">
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Footer -->
-<footer th:replace="fragments/footer :: siteFooter"></footer>
-
 <script th:src="@{/js/app.js}"></script>
-<script>
-    // Cargar todos los productos
-    document.addEventListener('DOMContentLoaded', function() {
-        const productsGrid = document.getElementById('products-grid');
-        const sortSelect = document.getElementById('sort');
-        const categorySelect = document.getElementById('category');
-
-        // Función para cargar y mostrar productos
-        function loadProducts() {
-            let filteredProducts = [...products];
-            const searchQuery = localStorage.getItem('searchQuery');
-
-            // Aplicar filtro de búsqueda si existe
-            if (searchQuery) {
-                filteredProducts = filteredProducts.filter(product =>
-                    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    product.description.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-                localStorage.removeItem('searchQuery');
-
-                // Mostrar mensaje si no hay resultados
-                if (filteredProducts.length === 0) {
-                    productsGrid.innerHTML = '<p class="no-results">No se encontraron productos que coincidan con tu búsqueda.</p>';
-                    return;
-                }
-            }
-
-            // Aplicar filtro de categoría
-            const category = categorySelect.value;
-            if (category !== 'all') {
-                filteredProducts = filteredProducts.filter(product => product.category === category);
-            }
-
-            // Aplicar ordenamiento
-            const sortValue = sortSelect.value;
-            switch(sortValue) {
-                case 'price-asc':
-                    filteredProducts.sort((a, b) => a.price - b.price);
-                    break;
-                case 'price-desc':
-                    filteredProducts.sort((a, b) => b.price - a.price);
-                    break;
-                case 'name-asc':
-                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
-                    break;
-                case 'name-desc':
-                    filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
-                    break;
-            }
-
-            // Mostrar productos
-            productsGrid.innerHTML = '';
-            if (filteredProducts.length === 0) {
-                productsGrid.innerHTML = '<p class="no-results">No hay productos en esta categoría.</p>';
-            } else {
-                filteredProducts.forEach(product => {
-                    const productCard = createProductCard(product);
-                    productsGrid.appendChild(productCard);
-                });
-            }
-        }
-
-        // Cargar productos inicialmente
-        loadProducts();
-
-        // Event listeners para ordenamiento y filtrado
-        sortSelect.addEventListener('change', loadProducts);
-        categorySelect.addEventListener('change', loadProducts);
-
-        // Agregar funcionalidad al botón de añadir al carrito
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('add-to-cart')) {
-                const productId = parseInt(e.target.getAttribute('data-id'));
-                const product = products.find(p => p.id === productId);
-                addToCart(product);
-            }
-        });
-
-        // Función para añadir al carrito (simulada)
-        function addToCart(product) {
-            // Aquí iría la lógica real para añadir al carrito
-            alert(`"${product.name}" ha sido añadido al carrito.`);
-        }
-    });
-</script>
+<footer th:replace="~{fragments/footer :: siteFooter}"></footer>
 </body>
 </html>

@@ -1,71 +1,91 @@
+<!-- src/main/resources/templates/admin/dashboard.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Panel de Administración</title>
-  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <title>Admin Dashboard - Productos</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
-<div class="admin-container">
+<header th:replace="fragments/header :: siteHeader"></header>
 
-  <header class="admin-header">
-    <h1>Panel de Administración</h1>
-  </header>
+<main class="admin-products-page">
+  <div class="container">
+    <div class="products-header">
+      <h1>Panel de Administración</h1>
 
-  <!-- Mensaje flash -->
-  <div th:if="${msg}" class="alert success" th:text="${msg}"></div>
+      <!-- Mensajes Flash -->
+      <div th:if="${msgSuccess}" class="alert success" th:text="${msgSuccess}"></div>
 
-  <!-- 1) Subir Excel -->
-  <section class="upload-section">
-    <h2>Importar Productos</h2>
-    <form th:action="@{/admin/dashboard/upload}" method="post" enctype="multipart/form-data">
-      <input type="file" name="file" accept=".xls,.xlsx" required>
-      <button type="submit" class="btn">Subir Excel</button>
-    </form>
-  </section>
+      <div class="products-controls">
 
-  <!-- 2) Formulario de búsqueda (opcional) -->
-  <section class="search-section">
-    <h2>Buscar / Filtrar</h2>
-    <form th:action="@{/admin/dashboard}" method="get">
-      <input type="text" name="query" placeholder="Nombre..." />
-      <input type="text" name="category" placeholder="Categoría..." />
-      <button type="submit" class="btn">Filtrar</button>
-    </form>
-  </section>
-
-  <!-- 3) Tabla de productos -->
-  <section class="table-container" th:if="${products}">
-    <h2>Productos</h2>
-    <table>
-      <thead>
-      <tr>
-        <th>ID</th><th>Nombre</th><th>Descripción</th>
-        <th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="p : ${products}">
-        <td th:text="${p.id}">ID</td>
-        <td th:text="${p.nombre}">Nombre</td>
-        <td th:text="${p.descripcion}">Descripción</td>
-        <td th:text="${p.categoria}">Categoría</td>
-        <td th:text="${#numbers.formatDecimal(p.precio, 1, 2)}">0.00</td>
-        <td th:text="${p.stock}">0</td>
-        <td>
-          <form th:action="@{/admin/dashboard/update}" method="post" style="display:inline;">
-            <input type="hidden" th:name="id" th:value="${p.id}"/>
-            <!-- aquí podrías abrir un modal o una vista de edición -->
-            <button type="submit" class="btn btn-edit">Editar</button>
+        <!-- 2. Botón/Subir Excel -->
+        <div class="upload-excel">
+          <form th:action="@{/admin/dashboard/upload}" method="post" enctype="multipart/form-data">
+            <label class="btn btn-primary">
+              Seleccionar Excel…
+              <input type="file" name="file" accept=".xlsx,.xls" hidden onchange="this.form.submit()" />
+            </label>
           </form>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-  </section>
-  <!-- Footer -->
-  <footer th:replace="fragments/footer :: siteFooter"></footer>
-</div>
+        </div>
+
+        <!-- 3. Búsqueda Admin: GET /admin/dashboard?query=... -->
+        <form th:action="@{/admin/dashboard}" method="get" class="search-form">
+          <input type="text" name="query" placeholder="Buscar por nombre…"
+                 th:value="${selectedQuery}" />
+          <button type="submit" class="btn">Buscar</button>
+        </form>
+
+        <!-- 4. Filtrar por categoría Admin: GET /admin/dashboard?category=... -->
+        <form th:action="@{/admin/dashboard}" method="get" class="filter-form">
+          <select name="category">
+            <option value="all"
+                    th:selected="${selectedCategory == null or selectedCategory == 'all'}">
+              Todas las categorías
+            </option>
+            <option value="Electrónica" th:selected="${selectedCategory == 'Electrónica'}">
+              Electrónica
+            </option>
+            <option value="Deportes" th:selected="${selectedCategory == 'Deportes'}">
+              Deportes
+            </option>
+            <option value="Ropa" th:selected="${selectedCategory == 'Ropa'}">
+              Ropa
+            </option>
+            <!-- Agrega acá tus demás categorías -->
+          </select>
+          <button type="submit" class="btn">Filtrar</button>
+        </form>
+
+        <!-- 5. Opcional: select para ordenar, igual que en pública (si quieres) -->
+        <div class="sort-options">
+          <label for="sortAdmin">Ordenar por:</label>
+          <select id="sortAdmin" onchange="this.form.submit()">
+            <option value="default">Predeterminado</option>
+            <option value="price-asc">Precio: Menor a Mayor</option>
+            <option value="price-desc">Precio: Mayor a Menor</option>
+            <option value="name-asc">Nombre: A-Z</option>
+            <option value="name-desc">Nombre: Z-A</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- --- Grilla de Productos Admin: reutilizamos el mismo fragment --- -->
+    <div class="products-grid" id="products-grid-public">
+      <!-- 1) th:each en un contenedor separado -->
+      <div th:each="product : ${products}">
+        <!-- 2) dentro, reemplaza esta etiqueta por el fragmento, pasándole “product” -->
+        <div
+                th:replace="~{fragments/product-card :: productCard(product=${product}, isAdmin=${isAdmin})}">
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<script th:src="@{/js/app.js}"></script>
+<footer th:replace="fragments/footer :: siteFooter"></footer>
 </body>
 </html>
 

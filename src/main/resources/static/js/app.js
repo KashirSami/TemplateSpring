@@ -1,65 +1,105 @@
-// Datos de productos demo
-const products = [
-    {
-        id: 1,
-        name: "Smartphone X1",
-        price: 599.99,
-        image: "https://via.placeholder.com/300x300?text=Smartphone+X1",
-        description: "El último smartphone con cámara de 48MP y pantalla AMOLED.",
-        category: "Electrónicos"
-    },
-    {
-        id: 2,
-        name: "Laptop Pro",
-        price: 899.99,
-        image: "https://via.placeholder.com/300x300?text=Laptop+Pro",
-        description: "Laptop potente con procesador i7 y 16GB de RAM.",
-        category: "Electrónicos"
-    },
-    {
-        id: 3,
-        name: "Zapatos Running",
-        price: 79.99,
-        image: "https://via.placeholder.com/300x300?text=Zapatos+Running",
-        description: "Zapatos cómodos para correr con amortiguación de aire.",
-        category: "Deportes"
-    },
-    {
-        id: 4,
-        name: "Cámara DSLR",
-        price: 499.99,
-        image: "https://via.placeholder.com/300x300?text=Cámara+DSLR",
-        description: "Cámara profesional con lente intercambiable 24-70mm.",
-        category: "Electrónicos"
-    },
-    {
-        id: 5,
-        name: "Reloj Inteligente",
-        price: 199.99,
-        image: "https://via.placeholder.com/300x300?text=Reloj+Inteligente",
-        description: "Monitoriza tu actividad física y notificaciones.",
-        category: "Electrónicos"
-    },
-    {
-        id: 6,
-        name: "Mochila Viaje",
-        price: 49.99,
-        image: "https://via.placeholder.com/300x300?text=Mochila+Viaje",
-        description: "Mochila resistente con compartimento para laptop.",
-        category: "Accesorios"
-    }
-];
+// static/js/app.js
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     setupSearch();
     setupLoginButton();
 
+    // Si estamos en la página “productos.html”:
+    if (window.location.pathname.endsWith('products.html')) {
+        loadProductosDesdeBackend();
+    }
+
+    // Si tienes un contenedor de “destacados”:
     if (document.getElementById('featured-products')) {
         loadFeaturedProducts();
     }
 });
 
 
+/**
+ * 1) EJEMPLO: Cargar todos los productos desde el backend (/productos) y luego filtrarlos.
+ */
+function loadProductosDesdeBackend() {
+    // Podemos leer la query que guardamos en localStorage (desde la búsqueda del index):
+    const q = localStorage.getItem('searchQuery') || '';
+    // Luego borramos para que no interfiera la siguiente vez:
+    localStorage.removeItem('searchQuery');
+
+    // Si hay alguna búsqueda, pedimos al backend /productos/filtro?query=...
+    let url = '/products';
+    if (q.trim() !== '') {
+        url = `/products/filtro?query=${encodeURIComponent(q)}`;
+    }
+
+    fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' }})
+        .then(res => {
+            if (!res.ok) {
+                console.error('Error cargando productos:', res.status, res.statusText);
+                return [];
+            }
+            return res.json();
+        })
+        .then(productos => {
+            // Ahora sí, para cada producto, creamos una card
+            renderListadoDeProductos(productos);
+        })
+        .catch(err => {
+            console.error('Fetch error en /products:', err);
+        });
+}
+
+
+function renderListadoDeProductos(productos) {
+    const contenedor = document.getElementById('featured-products') || document.getElementById('products-list');
+    if (!contenedor) return;
+
+    contenedor.innerHTML = ''; // vaciamos primero
+
+    if (!Array.isArray(productos) || productos.length === 0) {
+        const mensaje = document.createElement('p');
+        mensaje.textContent = 'No hay productos disponibles.';
+        contenedor.appendChild(mensaje);
+        return;
+    }
+
+    productos.forEach(prod => {
+        const card = createProductCard(prod);
+        contenedor.appendChild(card);
+    });
+}
+
+
+/**
+ * 3) Mantenemos tu createProductCard, adaptándola si cambian los nombres de campos
+ */
+function createProductCard(product) {
+    // Asumo que tu objeto Java “Product” en JSON tiene:
+    //   { id, nombre, descripcion, precio, category (o categoria), image (si lo guardas), stock }
+    const card = document.createElement('div');
+    card.className = 'product-card';
+
+    // Si no tienes “image” en Firestore, quita esa parte o asigna un placeholder
+    const imageUrl = product.image || 'https://via.placeholder.com/300x300?text=Sin+imagen';
+
+    card.innerHTML = `
+    <div class="product-image">
+      <img src="${imageUrl}" alt="${product.nombre}">
+    </div>
+    <div class="product-info">
+      <h3>${product.nombre}</h3>
+      <p class="product-description">${product.descripcion}</p>
+      <p class="product-price">$${(product.precio || 0).toFixed(2)}</p>
+      <button class="add-to-cart" data-id="${product.id}">Añadir al carrito</button>
+    </div>
+  `;
+    return card;
+}
+
+
+/**
+ * ------ Resto de tu código de búsqueda dentro del mismo app.js -------
+ * (setupSearch, performSearch, setupLoginButton, etc.)
+ */
 function setActiveLink() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-links a');
@@ -75,11 +115,11 @@ function setActiveLink() {
 function setupSearch() {
     const searchInput = document.querySelector('.search-bar input');
     const searchIcon = document.querySelector('.search-bar i');
+    if (!searchInput || !searchIcon) return;
 
     searchIcon.addEventListener('click', () => {
         performSearch(searchInput.value);
     });
-
     searchInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             performSearch(searchInput.value);
@@ -89,7 +129,6 @@ function setupSearch() {
 
 function performSearch(query) {
     if (query.trim() !== '') {
-        // Guardar la búsqueda en localStorage para usarla en la página de productos
         localStorage.setItem('searchQuery', query);
         window.location.href = 'products.html';
     }
@@ -97,38 +136,25 @@ function performSearch(query) {
 
 function setupLoginButton() {
     const loginBtn = document.getElementById('login-btn');
-
+    if (!loginBtn) return;
     loginBtn.addEventListener('click', () => {
-        // Aquí iría la lógica para mostrar el modal de login
         alert('Funcionalidad de login/registro. Se puede implementar un modal aquí.');
     });
 }
 
 function loadFeaturedProducts() {
-    const featuredContainer = document.getElementById('featured-products');
-    const featuredProducts = products.slice(0, 4); // Tomamos los primeros 4 como destacados
-
-    featuredProducts.forEach(product => {
-        const productCard = createProductCard(product);
-        featuredContainer.appendChild(productCard);
-    });
-}
-
-function createProductCard(product) {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-
-    card.innerHTML = `
-        <div class="product-image">
-            <img src="${product.image}" alt="${product.name}">
-        </div>
-        <div class="product-info">
-            <h3>${product.name}</h3>
-            <p class="product-description">${product.description}</p>
-            <p class="product-price">$${product.price.toFixed(2)}</p>
-            <button class="add-to-cart" data-id="${product.id}">Añadir al carrito</button>
-        </div>
-    `;
-
-    return card;
+    // Podemos reutilizar la misma lógica: siempre que haya un contenedor #featured-products,
+    // llamamos a loadProductosDesdeBackend y pintamos solo los primeros 4.
+    fetch('/productos?limit=4', { method: 'GET', headers: { 'Accept': 'application/json' } })
+        .then(res => res.json())
+        .then(productos => {
+            const featured = productos.slice(0, 4);
+            const featuredContainer = document.getElementById('featured-products');
+            featuredContainer.innerHTML = '';
+            featured.forEach(p => {
+                const card = createProductCard(p);
+                featuredContainer.appendChild(card);
+            });
+        })
+        .catch(err => console.error('Error cargando destacados:', err));
 }

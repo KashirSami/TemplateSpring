@@ -1,0 +1,40 @@
+<!--
+    src/main/resources/templates/fragments/product-card.html
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<div th:fragment="productCard(product, isAdmin)">
+  <div class="product-card">
+    <div class="product-image">
+      <img
+              th:src="@{|https://via.placeholder.com/300x200?text=${product.nombre}|}"
+              th:alt="${product.nombre}"
+              class="product-image"
+      />
+    </div>
+    <div class="product-info">
+      <h3 th:text="${product.nombre}">Nombre Producto</h3>
+      <p class="product-description" th:text="${product.descripcion}">Descripción</p>
+      <p class="product-category">Categoría: <span th:text="${product.categoria}">Categoría</span></p>
+      <p class="product-price">$<span th:text="${#numbers.formatDecimal(product.precio, 1, 2)}">0.00</span></p>
+      <p class="product-stock">Stock: <span th:text="${product.stock}">0</span></p>
+
+      <div th:if="${isAdmin}">
+        <a th:href="@{/admin/dashboard/edit/{id}(id=${product.id})}" class="btn btn-edit">
+          Editar
+        </a>
+      </div>
+      <div th:if="${!isAdmin}">
+        <button type="button" class="btn btn-buy">
+          Comprar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

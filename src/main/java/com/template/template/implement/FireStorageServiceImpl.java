@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.template.template.model.Product;
 import com.template.template.service.FirebaseStorageService;
+import com.template.template.utilities.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,13 +54,14 @@ public class FireStorageServiceImpl implements FirebaseStorageService {
 
     @Override
     public List<Product> searchProducts(String query) throws ExecutionException, InterruptedException {
-        ApiFuture<QuerySnapshot> future = firestore
-                .collection("productos")
-                .orderBy("nombre")
-                .startAt(query)
-                .endAt(query + "\uf8ff")
-                .get();
-        return getProducts(future);
+        String queryNorm = StringUtils.normalizeNoAccents(query);
+        return getAllProducts().stream()
+                .filter(p -> {
+                    if (p.getNombre() == null) return false;
+                    String nombreNorm = StringUtils.normalizeNoAccents(p.getNombre());
+                    return nombreNorm.contains(queryNorm);
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -73,25 +75,46 @@ public class FireStorageServiceImpl implements FirebaseStorageService {
             return null;
         }
         Product p = snapshot.toObject(Product.class);
-        p.setId(id);
+        if (p != null) {
+            p.setId(id);
+        }
         return p;
     }
+
     @Override
     public List<Product> filterByCategory(String category) throws InterruptedException, ExecutionException {
-        QuerySnapshot snap = firestore.collection("productos")
-                .whereEqualTo("categoria", category)
-                .get()
-                .get();
-
-        List<Product> productos = new ArrayList<>();
-        for (QueryDocumentSnapshot doc : snap.getDocuments()) {
-            Product p = doc.toObject(Product.class);
-            // Firestore no rellena el ID en el POJO, así que lo asignamos manualmente:
-            p.setId(doc.getId());
-            productos.add(p);
-        }
-        return productos;
+        String catNorm = StringUtils.normalizeNoAccents(category);
+        return getAllProducts().stream()
+                .filter(p -> {
+                    if (p.getCategoria() == null) return false;
+                    String catDBNorm = StringUtils.normalizeNoAccents(p.getCategoria());
+                    return catDBNorm.equals(catNorm);
+                })
+                .collect(Collectors.toList());
     }
+
+    public List<Product> searchByNameAndCategory(String name, String category) throws Exception {
+        String nameNorm = StringUtils.normalizeNoAccents(name);
+        String catNorm  = StringUtils.normalizeNoAccents(category);
+
+        List<Product> todos = getAllProducts();
+        return todos.stream()
+                .filter(p -> {
+                    if (p.getNombre() == null || p.getCategoria() == null) {
+                        return false;
+                    }
+                    String nombreNorm = StringUtils.normalizeNoAccents(p.getNombre());
+                    String catDBNorm  = StringUtils.normalizeNoAccents(p.getCategoria());
+
+                    boolean mismaCat;
+                    mismaCat = catDBNorm.equals(catNorm);
+
+                    boolean contieneNombre = nombreNorm.contains(nameNorm);
+                    return mismaCat && contieneNombre;
+                })
+                .collect(Collectors.toList());
+    }
+
 
     private List<Product> getProducts(ApiFuture<QuerySnapshot> future) throws InterruptedException, ExecutionException {
         List<Product> results = new ArrayList<>();
