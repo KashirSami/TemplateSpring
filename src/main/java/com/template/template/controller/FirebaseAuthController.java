@@ -1,8 +1,10 @@
 package com.template.template.controller;
 
+import com.template.template.database.FirebaseRestLogin;
 import com.template.template.handler.AdminValidator;
 import com.template.template.model.RegisterRequest;
 import com.template.template.service.FirebaseAuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,9 +32,6 @@ public class FirebaseAuthController {
     @Autowired
     private AdminValidator adminValidator;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     // Registro de usuarios
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
@@ -45,7 +44,7 @@ public class FirebaseAuthController {
                                       Model model) {
         String result = authService.registerUser(request);
         if ("success".equals(result)) {
-            return "redirect:/register?success";
+            return "redirect:/login?success";
         } else {
             model.addAttribute("errorMessage", result);
             return "register";
@@ -67,52 +66,83 @@ public class FirebaseAuthController {
     public String processLogin(
             @RequestParam String username,
             @RequestParam String password,
-            HttpSession session,
+            @RequestParam(required = false) Boolean rememberMe,
+            HttpServletRequest request,
             RedirectAttributes redirectAttributes) {
 
+        // Limpiar cualquier sesión previa antes de autenticar
+        SecurityContextHolder.clearContext();
+        request.getSession().invalidate();
+        HttpSession session = request.getSession(true);
+
         try {
+            // 1) Intentar credenciales de ADMIN
             if (adminValidator.isAdmin(username, password)) {
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                        username,
-                        null,
-                        List.of(new SimpleGrantedAuthority("ADMIN"))
+                        username, null, List.of(new SimpleGrantedAuthority("ADMIN"))
                 );
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(auth);
                 SecurityContextHolder.setContext(context);
-
                 session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-                System.out.println("Roles asignados: " + context.getAuthentication().getAuthorities());
 
-                return "redirect:admin/dashboard";
+                // Configurar “rememberMe” (7 días) o “hasta que cierre navegador” (-1)
+                if (Boolean.TRUE.equals(rememberMe)) {
+                    session.setMaxInactiveInterval(7 * 24 * 60 * 60);
+                } else {
+                    session.setMaxInactiveInterval(-1);
+                }
+                return "redirect:/admin/dashboard";
             }
 
-            // 2. Verificar usuario normal con Firebase
-            if (authService.loginUser(username, password)) {
-                Authentication auth = new UsernamePasswordAuthenticationToken(
-                        username,
-                        null,
-                        List.of(new SimpleGrantedAuthority("USER"))
-                );
-                SecurityContext context = SecurityContextHolder.createEmptyContext();
-                context.setAuthentication(auth);
-                SecurityContextHolder.setContext(context);
+            // 2) Intentar credenciales de usuario en Firebase
+            try {
+                boolean ok = authService.loginUser(username, password);
+                if (ok) {
+                    Authentication auth = new UsernamePasswordAuthenticationToken(
+                            username, null, List.of(new SimpleGrantedAuthority("USER"))
+                    );
+                    SecurityContext context = SecurityContextHolder.createEmptyContext();
+                    context.setAuthentication(auth);
+                    SecurityContextHolder.setContext(context);
+                    session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+                    session.setAttribute("userRole", "USER");
+                    session.setAttribute("userEmail", username);
 
-                session.setAttribute("SPRING_SECURITY_CONTEXT", context);
-                session.setAttribute("userRole", "USER");
-                session.setAttribute("userEmail", username);
+                    if (Boolean.TRUE.equals(rememberMe)) {
+                        session.setMaxInactiveInterval(7 * 24 * 60 * 60);
+                    } else {
+                        session.setMaxInactiveInterval(-1);
+                    }
+                    return "redirect:/";
+                }
+                // Teóricamente no llegas aquí porque loginUser lanza excepción si falla
+                redirectAttributes.addFlashAttribute("loginError", "No se pudo autenticar en Firebase");
+                return "redirect:/login";
 
-                return "redirect:/";
+            } catch (FirebaseRestLogin.FirebaseRestLoginException ex) {
+                String code = ex.getMessage();
+                switch (code) {
+                    case "INVALID_PASSWORD":
+                        redirectAttributes.addFlashAttribute("loginError", "Contraseña incorrecta.");
+                        break;
+                    case "EMAIL_NOT_FOUND":
+                        redirectAttributes.addFlashAttribute("loginError", "No existe usuario con ese correo.");
+                        break;
+                    case "USER_DISABLED":
+                        redirectAttributes.addFlashAttribute("loginError", "Usuario deshabilitado.");
+                        break;
+                    default:
+                        redirectAttributes.addFlashAttribute("loginError", "Error de autenticación: " + code);
+                }
+                return "redirect:/login";
             }
-
-            // 3. Si no se logró autenticar
-            redirectAttributes.addAttribute("error", true);
-            return "redirect:/login";
 
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addAttribute("error", true);
+            redirectAttributes.addFlashAttribute("loginError", "Error inesperado al iniciar sesión.");
             return "redirect:/login";
         }
     }
+
 }

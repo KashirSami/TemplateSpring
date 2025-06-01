@@ -16,8 +16,8 @@
         <div th:if="${param.success}" class="alert alert-success">
             ¡Registro exitoso! Por favor inicia sesión.
         </div>
-        <div th:if="${param.error}" class="alert alert-danger">
-            <span th:text="${errorMessage} ?: 'Error en el registro. Verifica tus datos.'"></span>
+        <div th:if="${errorMessage != null}" class="alert alert-danger">
+            <span th:text="${errorMessage}"></span>
         </div>
 
         <!-- Formulario de registro -->
@@ -31,9 +31,13 @@
             <div class="mb-3">
                 <label for="email" class="form-label">Correo Electrónico</label>
                 <input type="email" class="form-control" id="email" name="email" required>
-                <div class="form-error" id="emailError"></div>
+                <div class="form-error" id="emailError1"></div>
             </div>
-
+            <div class="mb-3">
+                <label for="confirmEmail" class="form-label">Confirmar Correo Electrónico</label>
+                <input type="email" class="form-control" id="confirmEmail" name="confirmEmail" required>
+                <div class="form-error" id="emailError2"></div>
+            </div>
             <div class="mb-3">
                 <label class="form-label">Teléfono</label>
                 <input type="text" class="form-control" name="telefono">
@@ -47,7 +51,7 @@
 
             <div class="mb-3">
                 <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
-                <input type="password" class="form-control" id="confirmPassword" required>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                 <div class="form-error" id="passwordError"></div>
             </div>
 
