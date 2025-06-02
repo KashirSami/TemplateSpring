@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.security.Principal;
+import java.util.concurrent.ExecutionException;
+
 @Controller
 public class PaymentController {
 
@@ -27,7 +30,7 @@ public class PaymentController {
     private String stripePublicKey;
 
     @GetMapping("/profile/payment-method")
-    public String showPaymentMethodPage(Model model) throws StripeException {
+    public String showPaymentMethodPage(Model model) throws ExecutionException {
         User current = userService.getAuthenticatedUser();
         if (current == null) {
             return "redirect:/login";

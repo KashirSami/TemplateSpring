@@ -956,3 +956,165 @@ footer {
     font-size: 0.875rem;
     margin-top: 0.25rem;
 }
+/* -----------------------------------------------------
+   1) Ajustes generales para la barra de navegación
+   ----------------------------------------------------- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100; /* para que esté por encima del side-menu */
+}
+
+/* El bloque izquierdo (hamburguesa + logo) */
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Logo */
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--dark-color);
+    margin-left: 1rem; /* espacio respecto al botón hamburguesa */
+}
+.logo span {
+    color: var(--primary-color);
+}
+
+/* Menú principal */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 1.75rem;
+}
+
+.nav-links li a {
+    color: var(--dark-color);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+    color: var(--primary-color);
+}
+
+/* Bloque derecho: usuario logueado o botones de auth */
+.user-info-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-email {
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.logout-button {
+    background-color: var(--accent-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+}
+
+/* Botones cuando NO hay sesión */
+.auth-buttons .btn {
+    margin-left: 0.5rem;
+}
+
+/* -----------------------------------------------------
+   2) Estilos para botón “hamburguesa”
+   ----------------------------------------------------- */
+.hamburger-btn {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 22px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.hamburger-icon {
+    display: block;
+    height: 3px;
+    background-color: var(--dark-color);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* -----------------------------------------------------
+   3) Estilos para el “side-menu” (deslizable desde la izquierda)
+   ----------------------------------------------------- */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -16.6667%; /* Oculto justo fuera de la pantalla (1/6 = ≈16.6667%) */
+    width: 16.6667vw; /* Aproximadamente 1/6 del ancho de la ventana */
+    max-width: 260px; /* Si prefieres un límite en px */
+    height: 100vh;
+    background-color: #ffffff;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    padding-top: 3.5rem; /* separación respecto al header */
+    transition: left 0.3s ease;
+    z-index: 90; /* Debe ir bajo el z-index de .navbar */
+}
+
+/* Cuando el side-menu tiene clase .open, se coloca en 0 */
+.side-menu.open {
+    left: 0;
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-menu li {
+    margin: 1rem 0;
+}
+
+.side-menu li a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--dark-color);
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.side-menu li a:hover {
+    background-color: var(--light-color);
+}
+
+/* Estilo particular para “Cerrar sesión” en rojo */
+.logout-item a.logout-link {
+    color: var(--accent-color);
+}
+
+.logout-item a.logout-link:hover {
+    color: #c0392b;
+}
+
+/* -----------------------------------------------------
+   4) Ajustes responsive adicionales (si los necesitas)
+   ----------------------------------------------------- */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+}

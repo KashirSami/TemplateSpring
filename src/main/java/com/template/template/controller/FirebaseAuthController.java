@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 public class FirebaseAuthController {
@@ -45,7 +46,7 @@ public class FirebaseAuthController {
 
     @PostMapping("/register")
     public String processRegistration(@ModelAttribute RegisterRequest request,
-                                      Model model) {
+                                      Model model) throws ExecutionException {
         if (!request.getEmail().equals(request.getConfirmEmail())) {
             model.addAttribute("errorMessage", "Los correos no coinciden.");
             return "register";

@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.concurrent.ExecutionException;
+
 @Controller
 @RequestMapping("/profile")
 public class UserController {
@@ -22,7 +24,7 @@ public class UserController {
 
 
     @GetMapping
-    public String viewProfile(Model model) {
+    public String viewProfile(Model model) throws ExecutionException {
         User current = userService.getAuthenticatedUser();
         if (current == null) {
             return "redirect:/login";
@@ -44,7 +46,7 @@ public class UserController {
      */
     @PostMapping("/update")
     public String updateProfile(@ModelAttribute ProfileRequest profileRequest,
-                                Model model) {
+                                Model model) throws ExecutionException {
         User current = userService.getAuthenticatedUser();
         if (current == null) {
             return "redirect:/login";
