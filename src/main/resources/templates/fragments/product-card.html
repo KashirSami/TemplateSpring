@@ -1,6 +1,3 @@
-<!--
-    src/main/resources/templates/fragments/product-card.html
--->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -29,9 +26,16 @@
         </a>
       </div>
       <div th:if="${!isAdmin}">
-        <button type="button" class="btn btn-buy">
-          Comprar
+        <!-- ... dentro del bucle de productos, en lugar de th:onclick ... -->
+        <button
+                class="btn add-to-cart-btn"
+                th:attr="data-id=${product.id},
+                data-name=${product.nombre},
+                data-price=${product.precio}">
+          Añadir al carrito
         </button>
+
+
       </div>
     </div>
   </div>

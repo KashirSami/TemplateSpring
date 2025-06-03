@@ -29,7 +29,7 @@ public class FirebaseRestLogin {
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "proyectofinal-ca5b2.json");
+            conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
             // Construir JSON de petición

@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -97,9 +98,14 @@ public class FirebaseAuthController {
         try {
             // 1) Intentar credenciales de ADMIN
             if (adminValidator.isAdmin(username, password)) {
+                UserDetails adminUser = org.springframework.security.core.userdetails.User
+                        .withUsername(username)
+                        .password("")
+                        .authorities("ADMIN")
+                        .build();
+
                 Authentication auth = new UsernamePasswordAuthenticationToken(
-                        username, null, List.of(new SimpleGrantedAuthority("ADMIN"))
-                );
+                        adminUser, null, adminUser.getAuthorities());
                 SecurityContext context = SecurityContextHolder.createEmptyContext();
                 context.setAuthentication(auth);
                 SecurityContextHolder.setContext(context);
@@ -118,9 +124,14 @@ public class FirebaseAuthController {
             try {
                 boolean ok = authService.loginUser(username, password);
                 if (ok) {
+                    UserDetails normalUser = org.springframework.security.core.userdetails.User
+                            .withUsername(username)    // el email será el username
+                            .password("")             // no se usa aquí
+                            .authorities("USER")
+                            .build();
                     Authentication auth = new UsernamePasswordAuthenticationToken(
-                            username, null, List.of(new SimpleGrantedAuthority("USER"))
-                    );
+                            normalUser, null, normalUser.getAuthorities());
+
                     SecurityContext context = SecurityContextHolder.createEmptyContext();
                     context.setAuthentication(auth);
                     SecurityContextHolder.setContext(context);

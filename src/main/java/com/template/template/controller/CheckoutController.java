@@ -1,0 +1,127 @@
+package com.template.template.controller;
+
+import com.google.api.client.util.Value;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.billingportal.Session;
+import com.stripe.param.checkout.SessionCreateParams;
+import com.template.template.model.CartItem;
+import com.template.template.model.User;
+import com.template.template.service.CartService;
+import com.template.template.service.OrderService;
+import com.template.template.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+@Controller
+public class CheckoutController {
+
+    @Autowired
+    private CartService cartService;
+    @Autowired private OrderService orderService;
+    @Autowired private UserService userService;
+
+    @Value("${stripe.secret.key}")
+    private String stripeSecretKey;
+    @Value("${stripe.public.key}")
+    private String stripePublicKey;
+
+    // 1) Muestra la vista /checkout con los ítems del carrito
+    @GetMapping("/checkout")
+    public String viewCheckout(Model model) throws ExecutionException, InterruptedException {
+        User user = userService.getAuthenticatedUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+        List<CartItem> items = cartService.getCart(user.getEmail());
+        double total = cartService.calculateTotal(items);
+        model.addAttribute("cartItems", items);
+        model.addAttribute("subtotal", total);
+        model.addAttribute("total", total);
+        model.addAttribute("stripePublicKey", stripePublicKey);
+        return "checkout";
+    }
+
+    // 2) Endpoint que crea la sesión de Checkout en Stripe y devuelve sessionId
+    @PostMapping("/checkout/create-session")
+    @ResponseBody
+    public Map<String, String> createCheckoutSession() throws StripeException, ExecutionException, InterruptedException {
+        User user = userService.getAuthenticatedUser();
+        if (user == null) {
+            throw new IllegalStateException("Usuario no autenticado");
+        }
+        List<CartItem> items = cartService.getCart(user.getEmail());
+        Stripe.apiKey = stripeSecretKey;
+
+        // Construcción de LineItems:
+        List<SessionCreateParams.LineItem> stripeItems = items.stream().map(ci -> {
+            return SessionCreateParams.LineItem.builder()
+                    .setPriceData(
+                            SessionCreateParams.LineItem.PriceData.builder()
+                                    .setCurrency("eur")
+                                    .setUnitAmount((long)(ci.getUnitPrice() * 100)) // en céntimos
+                                    .setProductData(
+                                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                    .setName(ci.getItemName())
+                                                    .build()
+                                    )
+                                    .build()
+                    )
+                    .setQuantity((long) ci.getQuantity())
+                    .build();
+        }).collect(Collectors.toList());
+
+        SessionCreateParams params = SessionCreateParams.builder()
+                .addAllLineItem(stripeItems)
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl("http://localhost:8080/checkout/success?session_id={CHECKOUT_SESSION_ID}")
+                .setCancelUrl("http://localhost:8080/checkout/cancel")
+                .build();
+
+        Session session = Session.create((Map<String, Object>) params);
+        return Map.of("sessionId", session.getId());
+    }
+
+    // 3) Página de éxito tras el pago
+    @GetMapping("/checkout/success")
+    public String checkoutSuccess(@RequestParam("session_id") String sessionId,
+                                  Model model) throws StripeException, ExecutionException, InterruptedException {
+        User user = userService.getAuthenticatedUser();
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        /* 3.1) Validar sesión en Stripe
+        Stripe.apiKey = stripeSecretKey;
+        Session stripeSession = Session.create(sessionId);
+        if (!"complete".equals(stripeSession.getPaymentStatus())) {
+            // En realidad, por defecto la sesión redirige solo si se completó. Pero conviene validar.
+            return "redirect:/checkout";
+        }
+        */
+
+        // 3.2) Crear la Order en Firestore
+        String orderId = orderService.createOrder(user.getEmail());
+
+        // 3.3) Pasar datos a la vista de confirmación
+        model.addAttribute("orderId", orderId);
+        model.addAttribute("totalPaid", cartService.calculateTotal(cartService.getCart(user.getEmail())));
+        return "checkout-success"; // Plantilla Thymeleaf
+    }
+
+    // 4) Página si canceló el pago
+    @GetMapping("/checkout/cancel")
+    public String checkoutCancel() {
+        return "checkout-cancel"; // Indica “Pago cancelado” y un link para volver al carrito
+    }
+}

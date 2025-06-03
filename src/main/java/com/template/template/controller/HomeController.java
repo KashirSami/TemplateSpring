@@ -24,11 +24,7 @@ public class HomeController {
             try {
                 // Obtiene los datos del usuario de Firebase
                 UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmail(userEmail);
-
-                // Añade los datos del usuario al modelo
-                model.addAttribute("userName", userRecord.getDisplayName());
-                model.addAttribute("userEmail", userRecord.getEmail());
-                model.addAttribute("userPhoto", userRecord.getPhotoUrl());
+                
             } catch (FirebaseAuthException e) {
                 model.addAttribute("error", "Error al cargar datos del usuario");
             }

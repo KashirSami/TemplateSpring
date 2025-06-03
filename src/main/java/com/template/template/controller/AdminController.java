@@ -92,7 +92,7 @@ public class AdminController {
         } else {
             results = storageService.getAllProducts();
         }
-        model.addAttribute("productos", results);
+        model.addAttribute("products", results);
         return "admin/dashboard";
     }
 

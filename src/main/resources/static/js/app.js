@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupLoginButton();
 
     // Si estamos en la página “products.html”, cargamos TODOS los productos
-    if (window.location.pathname.endsWith('products.html')) {
+    if (window.location.pathname === '/products') {
         loadProductosDesdeBackend();
     }
 
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadProductosDesdeBackend() {
     // Si alguna vez guardaste algo en localStorage para buscar, lo podrías adaptar aquí.
     // Pero si no vas a filtrar, NO necesitas leer ni borrar nada de localStorage.
-    fetch('/products', {
+    fetch('/api/products', {
         method: 'GET',
         headers: { 'Accept': 'application/json' }
     })
@@ -91,7 +91,7 @@ function createProductCard(product) {
 
 function loadFeaturedProducts() {
     // Solo cogemos los primeros 4 productos de /products?limit=4
-    fetch('/products?limit=4', {
+    fetch('/api/products?limit=4', {
         method: 'GET',
         headers: { 'Accept': 'application/json' }
     })

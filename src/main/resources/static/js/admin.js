@@ -1,6 +1,3 @@
-// static/js/admin.js
-
-// Cada 10 segundos refrescamos la tabla de productos en el dashboard
 const REFRESH_INTERVAL_MS = 10_000;
 
 document.addEventListener('DOMContentLoaded', () => {

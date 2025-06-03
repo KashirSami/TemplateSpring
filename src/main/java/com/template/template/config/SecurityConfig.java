@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/", "/login", "/register", "/products","/favicon.ico","/error","/debug-auth", "/contact", "/about", "/css/**", "/js/**","/images/**").permitAll()
+                        .requestMatchers("/checkout/**", "/orders/**", "/profile/**", "/api/cart/").authenticated()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
