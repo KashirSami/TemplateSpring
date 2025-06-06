@@ -63,7 +63,7 @@
 
 
   <script th:inline="javascript">
-    const isUserLoggedIn = false;
+    const isUserLoggedIn = [[${session.userEmail != null}]];
   </script>
 
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Finalizar compra</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://js.stripe.com/v3/"></script>
+    <script th:src="@{/js/checkout.js}" defer></script>
+</head>
+<body th:attr="data-stripe-public-key=${stripePublicKey}">
+<header th:replace="fragments/header :: siteHeader"></header>
+<section class="checkout-section">
+    <div class="container">
+        <h1>Resumen de compra</h1>
+        <div th:if="${#lists.isEmpty(cartItems)}">
+            <p>Tu carrito está vacío.</p>
+        </div>
+        <div th:unless="${#lists.isEmpty(cartItems)}">
+            <table class="table">
+                <thead>
+                <tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${cartItems}">
+                    <td th:text="${item.itemName}"></td>
+                    <td th:text="${item.quantity}"></td>
+                    <td>€<span th:text="${item.unitPrice}"></span></td>
+                </tr>
+                </tbody>
+            </table>
+            <p class="checkout-total">Total: €<span th:text="${total}"></span></p>
+            <button id="pay-btn" class="btn btn-primary">Pagar</button>
+        </div>
+    </div>
+</section>
+<footer th:replace="fragments/footer :: siteFooter"></footer>
+</body>
+</html>

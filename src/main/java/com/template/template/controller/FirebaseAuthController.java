@@ -56,6 +56,11 @@ public class FirebaseAuthController {
             model.addAttribute("errorMessage", "Las contraseñas no coinciden.");
             return "register";
         }
+        String authResult = authService.registerUser(request);
+        if (!"success".equals(authResult)) {
+            model.addAttribute("errorMessage", authResult);
+            return "register";
+        }
 
         String result = userService.registerUser(
                 request.getNombre(),
@@ -68,7 +73,7 @@ public class FirebaseAuthController {
             return "register";
         }
 
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     // Login para usuarios y admin

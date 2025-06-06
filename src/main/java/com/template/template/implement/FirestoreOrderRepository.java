@@ -1,9 +1,6 @@
 package com.template.template.implement;
 
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.Query;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.*;
 import com.template.template.model.Order;
 import com.template.template.model.OrderProduct;
 import com.template.template.repo.OrderRepository;
@@ -19,7 +16,7 @@ import java.util.stream.Collectors;
 @Repository
 public class FirestoreOrderRepository implements OrderRepository {
 
-    private static final String COLLECTION = "orders";
+    private static final String COLLECTION = "order";
     @Autowired
     private Firestore firestore;
 
@@ -27,7 +24,7 @@ public class FirestoreOrderRepository implements OrderRepository {
     public String saveOrder(Order order) {
         Map<String, Object> data = new HashMap<>();
         data.put("userId", order.getUserId());
-        data.put("products", order.getProducts());
+        data.put("products", order.getProduct());
         data.put("totalPaid", order.getTotal());
         data.put("timestamp", order.getTimestamp());
         data.put("status", order.getStatus());
@@ -46,26 +43,70 @@ public class FirestoreOrderRepository implements OrderRepository {
             Order order = new Order();
             order.setId(doc.getId());
             order.setUserId((String) doc.get("userId"));
-            order.setTotal(((Double) doc.get("totalPaid")));
+            Object totalObj = doc.get("total");
+            if (totalObj instanceof Number) {
+                order.setTotal(((Number) totalObj).doubleValue());
+            }
             order.setTimestamp(doc.getDate("timestamp"));
             order.setStatus((String) doc.get("status"));
             // Convertir lista genérica a List<OrderProduct>
-            List<Map<String,Object>> rawProducts = (List<Map<String,Object>>) doc.get("products");
+            List<Map<String,Object>> rawProducts = (List<Map<String,Object>>) doc.get("productos");
             List<OrderProduct> listaProductos = rawProducts.stream().map(map -> {
                 OrderProduct op = new OrderProduct();
-                op.setProductId((String) map.get("productId"));
+                op.setProductId((String) map.get("id"));
                 op.setNombre((String) map.get("nombre"));
-                op.setPrecioUnitario((Double) map.get("precioUnitario"));
-                op.setCantidad((Integer)map.get("cantidad"));
+                Object price = map.get("precio");
+                if (price instanceof Number) {
+                    op.setPrecioUnitario(((Number) price).doubleValue());
+                }
+                Object qty = map.get("stock");
+                if (qty instanceof Number) {
+                    op.setCantidad(((Number) qty).intValue());
+                }
                 return op;
             }).collect(Collectors.toList());
-            order.setProducts(listaProductos);
+            order.setProduct(listaProductos);
             return order;
         }).collect(Collectors.toList());
     }
 
     @Override
     public Order getOrderById(String orderId) throws ExecutionException, InterruptedException {
-        return null;
+        DocumentReference ref = firestore.collection(COLLECTION).document(orderId);
+        DocumentSnapshot doc = ref.get().get();
+        if (!doc.exists()) {
+            return null;
+        }
+
+        Order order = new Order();
+        order.setId(doc.getId());
+        order.setUserId((String) doc.get("userId"));
+        Object totalObj2 = doc.get("total");
+        if (totalObj2 instanceof Number) {
+            order.setTotal(((Number) totalObj2).doubleValue());
+        }
+        order.setTimestamp(doc.getDate("timestamp"));
+        order.setStatus((String) doc.get("status"));
+
+        List<Map<String, Object>> rawProducts = (List<Map<String, Object>>) doc.get("productos");
+        if (rawProducts != null) {
+            List<OrderProduct> productos = rawProducts.stream().map(map -> {
+                OrderProduct op = new OrderProduct();
+                op.setProductId((String) map.get("id"));
+                op.setNombre((String) map.get("nombre"));
+                Object price = map.get("precio");
+                if (price instanceof Number) {
+                    op.setPrecioUnitario(((Number) price).doubleValue());
+                }
+                Object qty = map.get("stock");
+                if (qty instanceof Number) {
+                    op.setCantidad(((Number) qty).intValue());
+                }
+                return op;
+            }).collect(Collectors.toList());
+            order.setProduct(productos);
+        }
+
+        return order;
     }
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Pago cancelado</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header th:replace="fragments/header :: siteHeader"></header>
+<section class="checkout-cancel">
+  <div class="container">
+    <h1>El pago fue cancelado</h1>
+    <p>Tu transacción ha sido cancelada. Puedes volver al carrito para intentarlo de nuevo.</p>
+    <a th:href="@{/checkout}" class="btn btn-primary mt-3">Volver al checkout</a>
+  </div>
+</section>
+<footer th:replace="fragments/footer :: siteFooter"></footer>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

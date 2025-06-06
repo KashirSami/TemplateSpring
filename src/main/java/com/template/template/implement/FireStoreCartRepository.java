@@ -11,9 +11,9 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-@Repository
+@Repository("cartRepository")
 public class FireStoreCartRepository implements CartRepository {
-    private static final String COLLECTION = "carts";
+    private static final String COLLECTION = "cart";
     @Autowired
     private Firestore firestore;
 
@@ -28,7 +28,12 @@ public class FireStoreCartRepository implements CartRepository {
 
     @Override
     public List<CartItem> getCartItems(String userId) {
-        return List.of();
+        try {
+            return getCart(userId);
+        } catch (Exception e) {
+            return new ArrayList<>();
+
+        }
     }
 
     @Override
@@ -39,13 +44,20 @@ public class FireStoreCartRepository implements CartRepository {
         if (!snap.exists()) {
             return new ArrayList<>();
         }
-        List<Map<String,Object>> rawItems = (List<Map<String,Object>>) snap.get("items");
+        List<Map<String, Object>> rawItems = (List<Map<String, Object>>) snap.get("items");
+        if (rawItems == null) return new ArrayList<>();
         return rawItems.stream().map(map -> {
             CartItem ci = new CartItem();
             ci.setProductId((String) map.get("productId"));
-            ci.setItemName((String) map.get("nombre"));
-            ci.setUnitPrice((Double) map.get("precioUnitario"));
-            ci.setQuantity((Integer) map.get("cantidad")); // Firestore guarda enteros como Long
+            ci.setItemName((String) map.get("itemName"));
+            Object price = map.get("precioUnitario");
+            if (price instanceof Number) {
+                ci.setUnitPrice(((Number) price).doubleValue());
+            }
+            Object qty = map.get("cantidad");
+            if (qty instanceof Number) {
+                ci.setQuantity(((Number) qty).intValue());
+            }
             return ci;
         }).collect(Collectors.toList());
     }
@@ -57,6 +69,22 @@ public class FireStoreCartRepository implements CartRepository {
 
     @Override
     public void addToCart(String userId, String productId, int cantidad) {
-
+        try {
+            List<CartItem> current = getCart(userId);
+            Optional<CartItem> existente = current.stream()
+                    .filter(ci -> ci.getProductId().equals(productId))
+                    .findFirst();
+            if (existente.isPresent()) {
+                CartItem ci = existente.get();
+                ci.setQuantity(ci.getQuantity() + cantidad);
+            } else {
+                CartItem ci = new CartItem();
+                ci.setProductId(productId);
+                ci.setQuantity(cantidad);
+                current.add(ci);
+            }
+            saveCart(userId, current);
+        } catch (Exception e) {
+        }
     }
 }

@@ -2,7 +2,7 @@
 // (supongo que en el listado de productos tienes botones con clase .add-to-cart).
 document.addEventListener('DOMContentLoaded', () => {
     // 1) Seleccionamos todos los botones “Añadir al carrito”
-    const addButtons = document.querySelectorAll('.add-to-cart');
+    const addButtons = document.querySelectorAll('.add-to-cart, .add-to-cart-btn');
 
     addButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -79,7 +79,7 @@ function updateCartBadge() {
     const badge = document.getElementById('cart-badge');
     if (!badge) return;
     const cart = getCart();
-    const totalQty = cart.reduce((sum, p) => sum + p.qty, 0);
+    const totalQty = cart.reduce((sum, p) => sum + p.quantity, 0);
     badge.textContent = totalQty;
 }
 

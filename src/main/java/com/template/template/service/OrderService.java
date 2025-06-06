@@ -1,7 +1,5 @@
 package com.template.template.service;
 
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
 import com.template.template.model.CartItem;
 import com.template.template.model.Order;
 import com.template.template.model.OrderProduct;
@@ -20,9 +18,9 @@ public class OrderService {
 
     @Autowired
     private CartService cartService;
-    @Qualifier("firestoreOrderRepository" )
-    @Autowired private OrderRepository orderRepo;
-    @Autowired private Firestore firestore;
+    @Qualifier("firestoreOrderRepository")
+    @Autowired
+    private OrderRepository orderRepo;
 
     public String createOrder(String userId) throws ExecutionException, InterruptedException {
         List<CartItem> cartItems = cartService.getCart(userId);
@@ -43,7 +41,7 @@ public class OrderService {
         double total = cartService.calculateTotal(cartItems);
         Order order = new Order();
         order.setUserId(userId);
-        order.setProducts(products);
+        order.setProduct(products);
         order.setTotal(total);
         order.setTimestamp(new Date());
         order.setStatus("COMPLETADO");
@@ -57,8 +55,6 @@ public class OrderService {
         return orderRepo.getOrdersByUser(userId);
     }
     public Order getOrderById(String orderId) throws ExecutionException, InterruptedException {
-        DocumentSnapshot snap = firestore.collection("orders").document(orderId).get().get();
-        if (!snap.exists()) return null;
-        return snap.toObject(Order.class);
+        return orderRepo.getOrderById(orderId);
     }
 }
