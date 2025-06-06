@@ -6,6 +6,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.billingportal.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.template.template.model.CartItem;
+import com.template.template.model.Order;
 import com.template.template.model.User;
 import com.template.template.service.CartService;
 import com.template.template.service.OrderService;
@@ -111,10 +112,10 @@ public class CheckoutController {
         */
 
         // 3.2) Crear la Order en Firestore
-        String orderId = orderService.createOrder(user.getEmail());
+        Order order = orderService.createOrder(user.getEmail());
 
         // 3.3) Pasar datos a la vista de confirmación
-        model.addAttribute("orderId", orderId);
+        model.addAttribute("orderId", order);
         model.addAttribute("totalPaid", cartService.calculateTotal(cartService.getCart(user.getEmail())));
         return "checkout-success"; // Plantilla Thymeleaf
     }

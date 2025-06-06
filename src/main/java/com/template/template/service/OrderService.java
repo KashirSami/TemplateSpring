@@ -22,7 +22,7 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepo;
 
-    public String createOrder(String userId) throws ExecutionException, InterruptedException {
+    public Order createOrder(String userId) throws ExecutionException, InterruptedException {
         List<CartItem> cartItems = cartService.getCart(userId);
         if (cartItems.isEmpty()) {
             throw new IllegalStateException("No hay productos en el carrito");
@@ -47,8 +47,9 @@ public class OrderService {
         order.setStatus("COMPLETADO");
 
         String orderId = orderRepo.saveOrder(order);
+        order.setId(orderId);
         cartService.clearCart(userId);
-        return orderId;
+        return order;
     }
 
     public List<Order> getOrdersForUser(String userId) throws ExecutionException, InterruptedException {

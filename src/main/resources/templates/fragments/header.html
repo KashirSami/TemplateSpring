@@ -28,7 +28,7 @@
 
       <div th:if="${session.userEmail}" class="cart-container">
         <button class="cart-btn" aria-label="Ver carrito">
-          <span class="cart-icon"></span>
+          <img th:src="@{/images/cart.svg}" alt="Carrito" class="cart-icon" />
           <span class="cart-badge" id="cart-badge">0</span>
         </button>
       </div>

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addButtons = document.querySelectorAll('.add-to-cart, .add-to-cart-btn');
 
     addButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             e.preventDefault();
             // Si no hay sesión, redirigimos a login
             if (!isUserLoggedIn) {
@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             //    una llamada AJAX a un endpoint “/cart/add” para persistir en servidor/FireStore
             const productId = btn.getAttribute('data-id');
             addToCart({id: productId, quantity: 1});
+            await addToCart({id: productId, quantity: 1});
             actualizarBadge();
         });
     });
@@ -54,18 +55,35 @@ function getCart() {
         return [];
     }
 }
-
+async function fetchServerCart() {
+    try {
+        const res = await fetch('/api/cart');
+        if (!res.ok) throw new Error('network');
+        return await res.json();
+    } catch (e) {
+        return [];
+    }
+}
 // Función ejemplo para añadir un producto al carrito (usa localStorage para persistir temporalmente)
-function addToCart(item) {
+async function addToCart(item) {
     const cart = getCart();
     // Si el item ya existía, aumentamos cantidad; si no, lo agregamos con qty=1
     const existing = cart.find(p => p.id === item.id);
     if (existing) {
         existing.quantity += item.quantity;
     } else {
-        cart.push({id: item.id,quantity: item.quantity });
+        cart.push({id: item.id, quantity: item.quantity });
     }
     saveCart(cart);
+    try {
+        await fetch('/api/cart/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: item.id, cantidad: item.quantity })
+        });
+    } catch (e) {
+        console.error('Error enviando al servidor', e);
+    }
 }
 /**
  * Guarda el carrito en localStorage
@@ -75,11 +93,11 @@ function saveCart(cartList) {
     localStorage.setItem('cart', JSON.stringify(cartList));
 }
 
-function updateCartBadge() {
+async function updateCartBadge() {
     const badge = document.getElementById('cart-badge');
     if (!badge) return;
-    const cart = getCart();
-    const totalQty = cart.reduce((sum, p) => sum + p.quantity, 0);
+    const cart = await fetchServerCart();
+    const totalQty = cart.reduce((sum, p) => sum + p.quantity, 0)
     badge.textContent = totalQty;
 }
 
@@ -87,13 +105,13 @@ function updateCartBadge() {
  * Renderiza el carrito dentro de #cart-items-container leyendo localStorage.
  * Para cada ítem, hace fetch a `/products/{id}` para obtener nombre y precio.
  */
-function renderCart() {
+async function renderCart() {
     const container = document.getElementById('cart-items-container');
     const badge = document.getElementById('cart-badge');
     if (!container || !badge) return;
 
     container.innerHTML = ''; // limpiamos contenido previo
-    const cart = getCart();
+    const cart = await fetchServerCart();
 
     if (cart.length === 0) {
         container.innerHTML = '<p class="empty-cart-msg">Tu carrito está vacío.</p>';
@@ -103,28 +121,16 @@ function renderCart() {
 
     let totalQuantity = 0;
 
-    cart.forEach(async item => {
+    cart.forEach(item => {
         totalQuantity += item.quantity;
-        try {
-            // Se asume que existe un endpoint que devuelva JSON para /products/{id}
-            const res = await fetch(`/products/${item.id}`, {
-                headers: { 'Accept': 'application/json' }
-            });
-            if (!res.ok) throw new Error('No encontrado');
-            const prod = await res.json();
-
-            // Creamos el bloque HTML para este ítem
-            const div = document.createElement('div');
-            div.className = 'cart-item';
-            div.innerHTML = `
-              <span class="cart-item-name">${prod.nombre}</span>
-              <span class="cart-item-qty">x${item.quantity}</span>
-              <span class="cart-item-price">$${(prod.precio * item.quantity).toFixed(2)}</span>
-            `;
-            container.appendChild(div);
-        } catch (err) {
-            console.error('Error cargando producto', err);
-        }
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <span class="cart-item-name">${item.itemName}</span>
+          <span class="cart-item-qty">x${item.quantity}</span>
+          <span class="cart-item-price">$${(item.unitPrice * item.quantity).toFixed(2)}</span>
+        `;
+        container.appendChild(div);
     });
 
     badge.textContent = totalQuantity.toString();
@@ -149,10 +155,7 @@ function renderCart() {
 
 // Cada vez que cargue la página o modifiquemos el carrito, actualizamos la badge:
 function actualizarBadge() {
-    const badge = document.getElementById('cart-badge');
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const total = cart.reduce((sum, item) => sum + item.quantity, 0);
-    badge.textContent = total.toString();
+    updateCartBadge()
 }
 
 // Al cargar la página, invocamos actualizarBadge una sola vez:
