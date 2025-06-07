@@ -47,10 +47,14 @@ public class CartService {
         cartRepo.clearCart(userId);
     }
 
+    public void updateItemQuantity(String userId, String productId, int cantidad) throws Exception {
+        cartRepo.updateQuantity(userId, productId, cantidad);
+    }
     public double calculateTotal(List<CartItem> items) {
         return items.stream()
                 .mapToDouble(i -> i.getUnitPrice() * i.getQuantity())
                 .sum();
     }
+
 }
 

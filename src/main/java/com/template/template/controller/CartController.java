@@ -50,4 +50,14 @@ public class CartController {
         cartService.clearCart(user.getEmail());
         return ResponseEntity.ok(Map.of("message", "Carrito vaciado"));
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<?> updateQuantity(@RequestBody AddToCartRequest req) throws Exception {
+        User user = userService.getAuthenticatedUser();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        cartService.updateItemQuantity(user.getEmail(), req.getProductId(), req.getCantidad());
+        return ResponseEntity.ok(Map.of("message", "Cantidad actualizada"));
+    }
 }

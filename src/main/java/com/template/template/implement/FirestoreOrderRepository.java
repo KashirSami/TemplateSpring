@@ -43,7 +43,7 @@ public class FirestoreOrderRepository implements OrderRepository {
             Order order = new Order();
             order.setId(doc.getId());
             order.setUserId((String) doc.get("userId"));
-            Object totalObj = doc.get("total");
+            Object totalObj = doc.get("totalPaid");
             if (totalObj instanceof Number) {
                 order.setTotal(((Number) totalObj).doubleValue());
             }
@@ -55,11 +55,11 @@ public class FirestoreOrderRepository implements OrderRepository {
                 OrderProduct op = new OrderProduct();
                 op.setProductId((String) map.get("id"));
                 op.setNombre((String) map.get("nombre"));
-                Object price = map.get("precio");
+                Object price = map.get("precioUnitario");
                 if (price instanceof Number) {
                     op.setPrecioUnitario(((Number) price).doubleValue());
                 }
-                Object qty = map.get("stock");
+                Object qty = map.get("cantidad");
                 if (qty instanceof Number) {
                     op.setCantidad(((Number) qty).intValue());
                 }

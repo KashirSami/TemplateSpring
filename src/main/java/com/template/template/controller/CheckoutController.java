@@ -115,8 +115,8 @@ public class CheckoutController {
         Order order = orderService.createOrder(user.getEmail());
 
         // 3.3) Pasar datos a la vista de confirmación
-        model.addAttribute("orderId", order);
-        model.addAttribute("totalPaid", cartService.calculateTotal(cartService.getCart(user.getEmail())));
+        model.addAttribute("orderId", order.getId());
+        model.addAttribute("totalPaid", order.getTotal());
         return "checkout-success"; // Plantilla Thymeleaf
     }
 

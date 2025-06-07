@@ -10,4 +10,5 @@ public interface CartRepository {
     List<CartItem> getCart(String userId) throws ExecutionException, InterruptedException;
     void clearCart(String userId);
     void addToCart(String userId, String productId, int cantidad);
+    void updateQuantity(String userId, String productId, int cantidad) throws Exception;
 }

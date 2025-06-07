@@ -3,8 +3,11 @@ package com.template.template.implement;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.template.template.model.CartItem;
+import com.template.template.model.Product;
 import com.template.template.repo.CartRepository;
+import com.template.template.service.FirebaseStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -16,6 +19,9 @@ public class FireStoreCartRepository implements CartRepository {
     private static final String COLLECTION = "cart";
     @Autowired
     private Firestore firestore;
+    @Autowired
+    @Lazy
+    private FirebaseStorageService productService;
 
     @Override
     public void saveCart(String userId, List<CartItem> items) {
@@ -49,12 +55,14 @@ public class FireStoreCartRepository implements CartRepository {
         return rawItems.stream().map(map -> {
             CartItem ci = new CartItem();
             ci.setProductId((String) map.get("productId"));
-            ci.setItemName((String) map.get("itemName"));
-            Object price = map.get("precioUnitario");
+            ci.setItemName((String) map.getOrDefault("itemName", map.get("nombre")));
+            Object price = map.get("unitPrice");
+            if (price == null) price = map.get("precioUnitario");
             if (price instanceof Number) {
                 ci.setUnitPrice(((Number) price).doubleValue());
             }
-            Object qty = map.get("cantidad");
+            Object qty = map.get("quantity");
+            if (qty == null) qty = map.get("cantidad");
             if (qty instanceof Number) {
                 ci.setQuantity(((Number) qty).intValue());
             }
@@ -80,11 +88,33 @@ public class FireStoreCartRepository implements CartRepository {
             } else {
                 CartItem ci = new CartItem();
                 ci.setProductId(productId);
+                Product p = productService.getProductById(productId);
+                if (p != null) {
+                    ci.setItemName(p.getNombre());
+                    ci.setUnitPrice(p.getPrecio());
+                }
                 ci.setQuantity(cantidad);
                 current.add(ci);
             }
             saveCart(userId, current);
         } catch (Exception e) {
+            // Logging omitted for brevity
+        }
+    }
+
+    @Override
+    public void updateQuantity(String userId, String productId, int cantidad) throws Exception {
+        List<CartItem> current = getCart(userId);
+        Optional<CartItem> existente = current.stream()
+                .filter(ci -> ci.getProductId().equals(productId))
+                .findFirst();
+        if (existente.isPresent()) {
+            if (cantidad <= 0) {
+                current.remove(existente.get());
+            } else {
+                existente.get().setQuantity(cantidad);
+            }
+            saveCart(userId, current);
         }
     }
 }

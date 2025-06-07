@@ -121,18 +121,58 @@ async function renderCart() {
 
     let totalQuantity = 0;
 
-    cart.forEach(item => {
+    for (const item of cart) {
         totalQuantity += item.quantity;
+        const prod = await fetch(`/api/products/${item.productId}`).then(r => r.ok ? r.json() : {});
+        const image = prod.image || `https://via.placeholder.com/80x80?text=${encodeURIComponent(item.itemName)}`;
         const div = document.createElement('div');
-        div.className = 'cart-item';
+        div.className = 'cart-item-card';
         div.innerHTML = `
-          <span class="cart-item-name">${item.itemName}</span>
-          <span class="cart-item-qty">x${item.quantity}</span>
-          <span class="cart-item-price">$${(item.unitPrice * item.quantity).toFixed(2)}</span>
-        `;
+          <img src="${image}" alt="${item.itemName}" class="cart-item-img">
+          <div class="cart-item-info">
+            <span class="cart-item-name">${item.itemName}</span>
+            <span class="cart-item-price">$${item.unitPrice.toFixed(2)}</span>
+            <div class="qty-controls" data-id="${item.productId}">
+              <button class="qty-minus">-</button>
+              <span class="qty-value">${item.quantity}</span>
+              <button class="qty-plus">+</button>
+            </div>
+          </div>`;
         container.appendChild(div);
+    }
+
+    container.querySelectorAll('.qty-plus').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const wrapper = btn.closest('.qty-controls');
+            const id = wrapper.dataset.id;
+            const valueSpan = wrapper.querySelector('.qty-value');
+            const newQty = parseInt(valueSpan.textContent) + 1;
+            await fetch('/api/cart/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({productId: id, cantidad: newQty})
+            });
+            renderCart();
+            actualizarBadge();
+        });
     });
 
+    container.querySelectorAll('.qty-minus').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const wrapper = btn.closest('.qty-controls');
+            const id = wrapper.dataset.id;
+            const valueSpan = wrapper.querySelector('.qty-value');
+            const current = parseInt(valueSpan.textContent);
+            const newQty = current - 1;
+            await fetch('/api/cart/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({productId: id, cantidad: newQty})
+            });
+            renderCart();
+            actualizarBadge();
+        });
+    });
     badge.textContent = totalQuantity.toString();
 
     // Añadimos el footer con el botón “Comprar”
@@ -152,7 +192,6 @@ async function renderCart() {
         window.location.href = '/checkout';
     });
 }
-
 // Cada vez que cargue la página o modifiquemos el carrito, actualizamos la badge:
 function actualizarBadge() {
     updateCartBadge()
