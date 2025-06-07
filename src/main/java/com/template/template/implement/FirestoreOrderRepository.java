@@ -46,6 +46,11 @@ public class FirestoreOrderRepository implements OrderRepository {
             Object totalObj = doc.get("totalPaid");
             if (totalObj instanceof Number) {
                 order.setTotal(((Number) totalObj).doubleValue());
+            } else if (totalObj instanceof String) {
+                try {
+                    order.setTotal(Double.parseDouble((String) totalObj));
+                } catch (NumberFormatException ignored) {
+                }
             }
             order.setTimestamp(doc.getDate("timestamp"));
             order.setStatus((String) doc.get("status"));
@@ -55,14 +60,26 @@ public class FirestoreOrderRepository implements OrderRepository {
                 OrderProduct op = new OrderProduct();
                 op.setProductId((String) map.get("id"));
                 op.setNombre((String) map.get("nombre"));
+
                 Object price = map.get("precioUnitario");
                 if (price instanceof Number) {
                     op.setPrecioUnitario(((Number) price).doubleValue());
+                } else if (price instanceof String) {
+                    try {
+                        op.setPrecioUnitario(Double.parseDouble((String) price));
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
                 Object qty = map.get("cantidad");
                 if (qty instanceof Number) {
                     op.setCantidad(((Number) qty).intValue());
+                } else if (qty instanceof String) {
+                    try {
+                        op.setCantidad(Integer.parseInt((String) qty));
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
+
                 return op;
             }).collect(Collectors.toList());
             order.setProduct(listaProductos);
@@ -81,32 +98,46 @@ public class FirestoreOrderRepository implements OrderRepository {
         Order order = new Order();
         order.setId(doc.getId());
         order.setUserId((String) doc.get("userId"));
-        Object totalObj2 = doc.get("total");
+        Object totalObj2 = doc.get("totalPaid");
         if (totalObj2 instanceof Number) {
             order.setTotal(((Number) totalObj2).doubleValue());
+        } else if (totalObj2 instanceof String) {
+            try {
+                order.setTotal(Double.parseDouble((String) totalObj2));
+            } catch (NumberFormatException ignored) {
+            }
         }
         order.setTimestamp(doc.getDate("timestamp"));
         order.setStatus((String) doc.get("status"));
 
-        List<Map<String, Object>> rawProducts = (List<Map<String, Object>>) doc.get("productos");
+        List<Map<String, Object>> rawProducts = (List<Map<String, Object>>) doc.get("products");
         if (rawProducts != null) {
             List<OrderProduct> productos = rawProducts.stream().map(map -> {
                 OrderProduct op = new OrderProduct();
-                op.setProductId((String) map.get("id"));
+                op.setProductId((String) map.get("productId"));
                 op.setNombre((String) map.get("nombre"));
-                Object price = map.get("precio");
+                Object price = map.get("precioUnitario");
                 if (price instanceof Number) {
                     op.setPrecioUnitario(((Number) price).doubleValue());
+                } else if (price instanceof String) {
+                    try {
+                        op.setPrecioUnitario(Double.parseDouble((String) price));
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
-                Object qty = map.get("stock");
+                Object qty = map.get("cantidad");
                 if (qty instanceof Number) {
                     op.setCantidad(((Number) qty).intValue());
+                } else if (qty instanceof String) {
+                    try {
+                        op.setCantidad(Integer.parseInt((String) qty));
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
                 return op;
             }).collect(Collectors.toList());
             order.setProduct(productos);
         }
-
         return order;
     }
 }

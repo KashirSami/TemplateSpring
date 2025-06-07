@@ -1,8 +1,8 @@
 package com.template.template.controller;
 
-import com.google.api.client.util.Value;
 import com.stripe.model.SetupIntent;
 import com.stripe.param.SetupIntentCreateParams;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

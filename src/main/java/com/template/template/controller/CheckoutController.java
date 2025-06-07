@@ -1,9 +1,8 @@
 package com.template.template.controller;
 
-import com.google.api.client.util.Value;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.billingportal.Session;
+import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.template.template.model.CartItem;
 import com.template.template.model.Order;
@@ -12,6 +11,7 @@ import com.template.template.service.CartService;
 import com.template.template.service.OrderService;
 import com.template.template.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -89,11 +89,11 @@ public class CheckoutController {
                 .setCancelUrl("http://localhost:8080/checkout/cancel")
                 .build();
 
-        Session session = Session.create((Map<String, Object>) params);
+        Session session = Session.create(params.toMap());
         return Map.of("sessionId", session.getId());
     }
 
-    // 3) Página de éxito tras el pago
+    //Página de éxito tras el pago
     @GetMapping("/checkout/success")
     public String checkoutSuccess(@RequestParam("session_id") String sessionId,
                                   Model model) throws StripeException, ExecutionException, InterruptedException {
@@ -102,25 +102,24 @@ public class CheckoutController {
             return "redirect:/login";
         }
 
-        /* 3.1) Validar sesión en Stripe
+
         Stripe.apiKey = stripeSecretKey;
-        Session stripeSession = Session.create(sessionId);
+        Session stripeSession = Session.retrieve(sessionId);
         if (!"complete".equals(stripeSession.getPaymentStatus())) {
-            // En realidad, por defecto la sesión redirige solo si se completó. Pero conviene validar.
             return "redirect:/checkout";
         }
-        */
 
-        // 3.2) Crear la Order en Firestore
+
+        //Crear la Order en Firestore
         Order order = orderService.createOrder(user.getEmail());
 
-        // 3.3) Pasar datos a la vista de confirmación
+        //Pasar datos a la vista de confirmación
         model.addAttribute("orderId", order.getId());
         model.addAttribute("totalPaid", order.getTotal());
         return "checkout-success"; // Plantilla Thymeleaf
     }
 
-    // 4) Página si canceló el pago
+    //Página si canceló el pago
     @GetMapping("/checkout/cancel")
     public String checkoutCancel() {
         return "checkout-cancel"; // Indica “Pago cancelado” y un link para volver al carrito

@@ -17,7 +17,7 @@ public class AdminValidator {
 
     @PostConstruct
     public void init() {
-        this.adminPasswordHash = passwordEncoder.encode("Kashir123"); // o tu contraseña real
+        this.adminPasswordHash = passwordEncoder.encode("Kashir123");
     }
     public boolean isAdmin(String email, String rawPassword) {
         System.out.println("Comparando adminEmail con: " + email);
