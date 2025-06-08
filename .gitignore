@@ -1,6 +1,5 @@
 HELP.md
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
 !**/src/test/**/target/
 # Firebase
 /src/main/resources/proyectofinal-ca5b2.json

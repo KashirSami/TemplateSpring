@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Acerca de</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <script th:src="@{/js/app.js}"></script>
+</head>
+<body>
+<!-- Header -->
+<header th:replace="fragments/header :: siteHeader"></header>
+
+<!-- About Section -->
+<section class="about-section">
+  <div class="container">
+    <h1>Sobre Nosotros</h1>
+    <div class="about-content">
+      <div class="about-text">
+        <h2>Nuestra Historia</h2>
+        <p>Fundada en 2025, Mi Ecommerce comenzó como un pequeño proyecto con una gran visión: ofrecer productos de calidad a precios accesibles para todos.</p>
+        <p>Hoy en día, nos hemos convertido en una de las tiendas online más confiables, con miles de clientes satisfechos en todo el país.</p>
+
+        <h2>Nuestra Misión</h2>
+        <p>Proporcionar una experiencia de compra excepcional, con productos cuidadosamente seleccionados, envíos rápidos y un servicio al cliente excepcional.</p>
+
+        <h2>Nuestro Equipo</h2>
+        <p>Contamos con un equipo de profesionales apasionados por lo que hacen, comprometidos con la satisfacción del cliente y la innovación constante.</p>
+      </div>
+      <div class="about-image">
+        <img src="https://via.placeholder.com/500x400?text=Nuestro+Equipo" alt="Nuestro Equipo">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values Section -->
+<section class="values-section">
+  <div class="container">
+    <h2>Nuestros Valores</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <i class="fas fa-hand-holding-heart"></i>
+        <h3>Calidad</h3>
+        <p>Solo ofrecemos productos que cumplen con nuestros altos estándares de calidad.</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-lock"></i>
+        <h3>Confianza</h3>
+        <p>Transparencia y honestidad en todas nuestras transacciones.</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-shipping-fast"></i>
+        <h3>Rapidez</h3>
+        <p>Envíos rápidos y seguimiento en tiempo real.</p>
+      </div>
+      <div class="value-card">
+        <i class="fas fa-headset"></i>
+        <h3>Soporte</h3>
+        <p>Servicio al cliente disponible 24/7 para resolver cualquier duda.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="fragments/footer :: siteFooter"></footer>
+</body>
+</html>

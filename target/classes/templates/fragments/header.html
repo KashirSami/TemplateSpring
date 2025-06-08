@@ -1,0 +1,79 @@
+<div th:fragment="siteHeader">
+  <nav class="navbar">
+
+    <div class="navbar-left">
+      <div th:if="${session.userEmail}" class="user-hamburger-container">
+        <button class="hamburger-btn" aria-label="Abrir menú de usuario">
+          <span class="hamburger-icon"></span>
+          <span class="hamburger-icon"></span>
+          <span class="hamburger-icon"></span>
+        </button>
+      </div>
+
+      <a th:href="@{/}" class="logo">Mi<span>Ecommerce</span></a>
+    </div>
+
+    <ul class="nav-links">
+      <li><a th:href="@{/}">Inicio</a></li>
+      <li><a th:href="@{/products}">Productos</a></li>
+      <li><a th:href="@{/about}">Nosotros</a></li>
+      <li><a th:href="@{/contact}">Contacto</a></li>
+    </ul>
+
+
+    <div class="navbar-right">
+      <div th:unless="${session.userEmail != null or session.userRole == 'ADMIN'}" class="login-button-container">
+        <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+      </div>
+
+      <div th:if="${session.userRole == 'ADMIN'}" class="login-button-container">
+        <a th:href="@{/logout}" class="btn">Cerrar sesión</a>
+      </div>
+
+      <div th:if="${session.userEmail}" class="cart-container">
+        <button class="cart-btn" aria-label="Ver carrito">
+          <img th:src="@{/images/cart.svg}" alt="Carrito" class="cart-icon" />
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+
+  <div th:if="${session.userEmail}" class="side-menu">
+    <ul>
+      <li><a th:href="@{/profile}">Perfil</a></li>
+      <li><a th:href="@{/orders/history}">Historial de Pedidos</a></li>
+      <li><a th:href="@{/privacy-policy}">Política / Privacidad</a></li>
+      <li class="logout-item">
+        <a th:href="@{/logout}" class="logout-link">Cerrar sesión</a>
+      </li>
+    </ul>
+  </div>
+
+  <div th:if="${session.userEmail}" class="cart-panel">
+    <div class="cart-panel-header">
+      <h2>Tu Carrito</h2>
+      <button class="cart-close-btn" aria-label="Cerrar carrito">×</button>
+    </div>
+    <div id="cart-items-container">
+
+      <p class="empty-cart-msg">Tu carrito está vacío.</p>
+    </div>
+    <div class="cart-panel-footer">
+      <button id="checkout-btn" class="btn btn-primary w-100">Comprar</button>
+    </div>
+  </div>
+
+
+  <script th:inline="javascript">
+    const isUserLoggedIn = [[${session.userEmail != null}]];
+  </script>
+
+
+
+  <div th:if="${session.userEmail}">
+    <script th:src="@{/js/header-menu.js}"></script>
+    <script th:src="@{/js/cart-menu.js}"></script>
+  </div>
+</div>
