@@ -19,8 +19,6 @@ public class AdminValidator {
     private PasswordEncoder passwordEncoder;
 
     public boolean isAdmin(String email, String rawPassword) {
-        System.out.println("Comparando adminEmail con: " + email);
-        System.out.println("Password válida? " + passwordEncoder.matches(rawPassword, adminPasswordHash));
         return email.equals(adminEmail) &&
                 passwordEncoder.matches(rawPassword, adminPasswordHash);
     }
