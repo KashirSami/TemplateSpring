@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Cuenta | Mi Ecommerce</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<!-- Header -->
+<header th:replace="fragments/header :: siteHeader"></header>
+
+<!-- Reutilizamos las mismas clases de “login-section”/“login-card” -->
+<section class="login-section">
+    <div class="login-card">
+        <h1 class="login-title">Crear Cuenta</h1>
+        <p class="login-subtitle">Regístrate para acceder a tu cuenta</p>
+
+        <!-- Mensajes de estado -->
+        <!-- Éxito: /register?success -->
+        <div th:if="${param.success}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i> ¡Registro exitoso! Por favor inicia sesión.
+        </div>
+        <!-- Error de validación que venga de tu controlador -->
+        <div th:if="${errorMessage != null}" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Formulario de registro -->
+        <form th:action="@{/register}" method="post" id="registerForm">
+            <div class="form-group">
+                <label for="nombre"><i class="fas fa-user"></i> Nombre</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" placeholder="Tu nombre completo"
+                       th:value="${registerRequest.nombre}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Correo Electrónico</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="tucorreo@ejemplo.com"
+                       th:value="${registerRequest.email}" required>
+                <div class="form-error" id="emailError1"></div>
+            </div>
+            <div class="form-group">
+                <label for="confirmEmail"><i class="fas fa-envelope"></i> Confirmar Correo Electrónico</label>
+                <input type="email" id="confirmEmail" name="confirmEmail" class="form-control" placeholder="tucorreo@ejemplo.com"
+                       th:value="${registerRequest.confirmEmail}" required>
+                <div class="form-error" id="emailError2"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono"><i class="fas fa-phone"></i> Teléfono</label>
+                <input type="text" id="telefono" name="telefono" class="form-control" placeholder="Opcional"
+                       th:value="${registerRequest.telefono}">
+            </div>
+
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" minlength="6" required>
+                <div class="form-text">Mínimo 6 caracteres</div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword"><i class="fas fa-lock"></i> Confirmar Contraseña</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="••••••••" required>
+                <div class="form-error" id="passwordError"></div>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fas fa-user-plus"></i> Registrarse
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <p>¿Ya tienes cuenta? <a th:href="@{/login}">Inicia Sesión</a></p>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer th:replace="fragments/footer :: siteFooter"></footer>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

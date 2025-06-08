@@ -1,0 +1,1199 @@
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    a:focus, button:focus, input:focus {
+        outline: 2px solid var(--primary-color);
+        outline-offset: 2px;
+    }
+}
+
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+    --gray-color: #95a5a6;
+    --font-primary: 'Arial', sans-serif;
+    --font-secondary: 'Roboto', sans-serif;
+    --text-base-size: 1rem;
+    --text-scale-ratio: 1.2;
+    --mobile-breakpoint: 768px;
+    --tablet-breakpoint: 1024px;
+}
+
+body {
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+    font-family: var(--font-primary);
+    font-size: var(--text-base-size);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+.btn {
+    display: inline-block;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.btn:focus {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+
+.btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* Header */
+header {
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 1rem 2rem;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-toggle {
+    display: none;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.logo span {
+    color: var(--primary-color);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+}
+
+.nav-links li {
+    margin-left: 2rem;
+}
+
+.nav-links a {
+    color: var(--dark-color);
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+.search-login {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar {
+    position: relative;
+    margin-right: 1.5rem;
+}
+
+.search-bar input {
+    padding: 0.5rem 1rem;
+    padding-right: 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+    width: 200px;
+}
+
+.search-bar i {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-color);
+}
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        /* Transformar en menú desplegable */
+        position: fixed;
+        top: auto;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        transform: translateY(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .nav-active .nav-links {
+        transform: translateY(0);
+    }
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fnews.utexas.edu%2F2022%2F07%2F13%2Fwhat-does-it-take-to-be-a-hero%2F&psig=AOvVaw3TQVnMl0S2ZfEmq6Ky0Y3x&ust=1744973497548000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOiPkv_y3owDFQAAAAAdAAAAABAJ');
+    background-size: cover;
+    background-position: center;
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+    font-style: italic; /* Fallback para alt text */
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* Productos */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* GRID de productos */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+/* Tarjeta de cada producto */
+.product-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .product-image img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+}
+
+.product-card .product-info {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .product-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.product-card .product-info .product-description {
+    flex-grow: 1;
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.product-card .product-info .product-category,
+.product-card .product-info .product-price,
+.product-card .product-info .product-stock {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.product-card .product-info .btn-edit,
+.product-card .product-info .btn-buy {
+    margin-top: 0.75rem;
+    align-self: flex-start;
+    padding: 0.4rem 0.8rem;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+    text-decoration: none;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.product-card .product-info .btn-edit:hover,
+.product-card .product-info .btn-buy:hover {
+    background-color: #0056b3;
+}
+
+.add-to-cart {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.add-to-cart:hover {
+    background: var(--secondary-color);
+}
+
+.add-to-cart::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+.add-to-cart:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+.product-out-of-stock::after {
+    content: "Agotado";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
+}
+
+/* Footer */
+footer {
+    background: var(--dark-color);
+    color: white;
+    padding: 3rem 2rem;
+    margin-top: 3rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-section h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-section ul li a {
+    color: var(--light-color);
+    transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+    color: var(--primary-color);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-links a {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.copyright {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav-links {
+        margin-top: 1rem;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-links li {
+        margin: 0.5rem 0;
+    }
+
+    .search-login {
+        width: 100%;
+        margin-top: 1rem;
+        justify-content: space-between;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .products-container {
+        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+        gap: 2rem;
+        padding: 0;
+    }
+    /* About Page */
+    .about-section {
+        padding: 4rem 2rem;
+        background: white;
+    }
+
+    .about-section h1 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2.5rem;
+        color: var(--dark-color);
+    }
+
+    .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .about-text h2 {
+        margin: 1.5rem 0 1rem;
+        color: var(--primary-color);
+    }
+
+    .about-image img {
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .values-section {
+        padding: 4rem 2rem;
+        background: var(--light-color);
+    }
+
+    .values-section h2 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2rem;
+        color: var(--dark-color);
+    }
+
+    .values-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .value-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .value-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .value-card i {
+        font-size: 2.5rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .value-card h3 {
+        margin-bottom: 1rem;
+        color: var(--dark-color);
+    }
+
+    /* Contact Page */
+    .contact-section {
+        padding: 4rem 2rem;
+        background: white;
+    }
+
+    .contact-section h1 {
+        text-align: center;
+        margin-bottom: 3rem;
+        font-size: 2.5rem;
+        color: var(--dark-color);
+    }
+
+    .contact-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .contact-info h2, .contact-form h2 {
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+    }
+
+    .contact-info p {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .contact-info i {
+        margin-right: 0.8rem;
+        color: var(--primary-color);
+        width: 1.5rem;
+        text-align: center;
+    }
+
+    .social-media {
+        margin-top: 2rem;
+    }
+
+    .social-icons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .social-icons a {
+        color: var(--dark-color);
+        font-size: 1.5rem;
+        transition: color 0.3s;
+    }
+
+    .social-icons a:hover {
+        color: var(--primary-color);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    .map-section {
+        padding: 0 2rem 4rem;
+        background: var(--light-color);
+    }
+
+    .map-section h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        color: var(--dark-color);
+    }
+
+    .map-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Products Page */
+    .products-page {
+        padding: 4rem 2rem;
+    }
+
+    .products-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .products-header h1 {
+        font-size: 2.5rem;
+        color: var(--dark-color);
+        margin-bottom: 1rem;
+    }
+
+    .products-controls {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .sort-options, .filter-options {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sort-options select, .filter-options select {
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .no-results {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 2rem;
+        font-size: 1.2rem;
+        color: var(--gray-color);
+    }
+    @media (max-width: 480px) {
+        .products-container {
+            grid-template-columns: 1fr;
+        }
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+        .about-content, .contact-content {
+            grid-template-columns: 1fr;
+        }
+
+
+        .products-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .products-controls {
+            width: 100%;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .sort-options, .filter-options {
+            width: 100%;
+        }
+
+        .sort-options select, .filter-options select {
+            width: 100%;
+        }
+    }
+    /* Admin */
+    .admin-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .upload-section, .search-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 6px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .btn {
+        padding: 10px 15px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-edit {
+        padding: 6px 12px;
+        background-color: #f39c12;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+    }
+
+    .success {
+        color: #27ae60;
+        margin-top: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    /* Session usuario*/
+    .user-profile {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 1rem;
+    }
+}
+/* ==============================
+   |   Estilos para Login/Registro
+   ============================== */
+
+/* ------------------------------------------------
+   .login-section: fondo con imagen + overlay semitransparente
+   ------------------------------------------------ */
+.login-section {
+    background: linear-gradient(
+            rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.5)
+    ),
+    url('https://ejemplo.com/hero-bg.jpg') /* <- reemplaza con tu URL real */
+    no-repeat center center;
+    background-size: cover;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 2rem;
+}
+
+/* ------------------------------------------------
+   .login-card: cajita blanca semitransparente con sombra y animación
+   ------------------------------------------------ */
+.login-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------------
+   Títulos y subtítulos dentro de .login-card
+   ------------------------------------------------ */
+.login-title {
+    color: var(--dark-color);
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+.login-subtitle {
+    color: var(--gray-color);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+/* ------------------------------------------------
+   .form-group (ya existía, pero confirmamos estilos):
+   ------------------------------------------------ */
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* Texto de ayuda debajo de input */
+.form-text {
+    color: var(--gray-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* -----------------------------------------------
+   Botón de “Ingresar” / “Registrarse” dentro del card
+   (Se reutiliza la clase .btn-login para ambos)
+   ----------------------------------------------- */
+.btn-login {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.btn-login:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* -----------------------------------------------
+   Mensajes de alerta (copy de tu login)
+   ----------------------------------------------- */
+.alert {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-left: 4px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.alert-danger {
+    border-left-color: #e74c3c;
+    color: #e74c3c;
+}
+
+.alert-success {
+    border-left-color: #2ecc71;
+    color: #2ecc71;
+}
+
+/* -----------------------------------------------
+   Pie de formulario: texto pequeño con link
+   ----------------------------------------------- */
+.login-footer {
+    margin-top: 1.5rem;
+    color: var(--gray-color);
+    font-size: 0.9rem;
+}
+
+.login-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.login-footer a:hover {
+    color: var(--secondary-color);
+    text-decoration: underline;
+}
+
+/* -----------------------------------------------
+   .form-error: texto rojo para errores puntuales
+   ----------------------------------------------- */
+.form-error {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+/* -----------------------------------------------------
+   1) Ajustes generales para la barra de navegación
+   ----------------------------------------------------- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100; /* para que esté por encima del side-menu */
+}
+
+/* El bloque izquierdo (hamburguesa + logo) */
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Logo */
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--dark-color);
+    margin-left: 1rem; /* espacio respecto al botón hamburguesa */
+}
+.logo span {
+    color: var(--primary-color);
+}
+
+/* Menú principal */
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 1.75rem;
+}
+
+.nav-links li a {
+    color: var(--dark-color);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+    color: var(--primary-color);
+}
+
+/* Bloque derecho: usuario logueado o botones de auth */
+.user-info-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-email {
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.logout-button {
+    background-color: var(--accent-color);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    color: white;
+    transition: background 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+}
+
+/* Botones cuando NO hay sesión */
+.auth-buttons .btn {
+    margin-left: 0.5rem;
+}
+
+/* -----------------------------------------------------
+   2) Estilos para botón “hamburguesa”
+   ----------------------------------------------------- */
+.hamburger-btn {
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 22px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.hamburger-icon {
+    display: block;
+    height: 3px;
+    background-color: var(--dark-color);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* -----------------------------------------------------
+   3) Estilos para el “side-menu” (deslizable desde la izquierda)
+   ----------------------------------------------------- */
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -16.6667%; /* Oculto justo fuera de la pantalla (1/6 = ≈16.6667%) */
+    width: 16.6667vw; /* Aproximadamente 1/6 del ancho de la ventana */
+    max-width: 260px; /* Si prefieres un límite en px */
+    height: 100vh;
+    background-color: #ffffff;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+    padding-top: 3.5rem; /* separación respecto al header */
+    transition: left 0.3s ease;
+    z-index: 90; /* Debe ir bajo el z-index de .navbar */
+}
+
+/* Cuando el side-menu tiene clase .open, se coloca en 0 */
+.side-menu.open {
+    left: 0;
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-menu li {
+    margin: 1rem 0;
+}
+
+.side-menu li a {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--dark-color);
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.side-menu li a:hover {
+    background-color: var(--light-color);
+}
+
+/* Estilo particular para “Cerrar sesión” en rojo */
+.logout-item a.logout-link {
+    color: var(--accent-color);
+}
+
+.logout-item a.logout-link:hover {
+    color: #c0392b;
+}
+
+/* -----------------------------------------------------
+   4) Estilos para el carrito de compras en el header
+   ----------------------------------------------------- */
+.cart-container {
+    position: relative;
+}
+
+.cart-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    padding: 0;
+}
+
+.cart-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background: url('../img/cart.svg') no-repeat center/contain;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background-color: var(--accent-color);
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+}
+
+.cart-panel {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 320px;
+    max-width: 85%;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -2px 0 12px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 95;
+    display: flex;
+    flex-direction: column;
+    padding-top: 4rem;
+}
+
+.cart-panel.open {
+    right: 0;
+}
+
+.cart-panel-header {
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#cart-items-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.cart-panel-footer {
+    padding: 1rem;
+    border-top: 1px solid #eee;
+}
+
+/* -----------------------------------------------------
+   4) Ajustes responsive adicionales (si los necesitas)
+   ----------------------------------------------------- */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+}
