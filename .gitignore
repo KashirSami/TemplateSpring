@@ -5,6 +5,8 @@ HELP.md
 /src/main/resources/proyectofinal-ca5b2.json
 /src/main/resources/application.properties
 Dockerfile
+!**/target/
+
 ### STS ###
 .apt_generated
 .classpath
