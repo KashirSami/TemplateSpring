@@ -75,7 +75,8 @@ public class FirebaseAuthController {
 
     // Login para usuarios y admin
     @GetMapping("/login")
-    public String showLoginForm() {
+    public String showLoginForm(HttpServletRequest request) {
+        request.getSession(true);
         return "login";
     }
 
@@ -112,6 +113,7 @@ public class FirebaseAuthController {
                 context.setAuthentication(auth);
                 SecurityContextHolder.setContext(context);
                 session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+                session.setAttribute("userRole", "ADMIN");
 
                 // Configurar “rememberMe” (7 días) o “hasta que cierre navegador” (-1)
                 if (Boolean.TRUE.equals(rememberMe)) {

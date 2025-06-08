@@ -14,16 +14,10 @@ public class AdminValidator {
     private String adminEmail;
     @Value("${admin.password.hash}")
     private String adminPasswordHash;
-    @Value("${admin.password}")
-    private String adminPassword;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostConstruct
-    public void init() {
-        this.adminPasswordHash = passwordEncoder.encode(adminPassword);
-    }
     public boolean isAdmin(String email, String rawPassword) {
         System.out.println("Comparando adminEmail con: " + email);
         System.out.println("Password válida? " + passwordEncoder.matches(rawPassword, adminPasswordHash));
