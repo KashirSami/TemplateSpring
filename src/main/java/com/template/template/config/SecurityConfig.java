@@ -1,6 +1,7 @@
 package com.template.template.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -21,11 +22,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/css/**", "/js/**", "/images/**"))
+                        .ignoringRequestMatchers("/css/**", "/js/**", "/images/**", "/api/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/", "/login", "/register", "/products","/favicon.ico","/error","/debug-auth", "/contact", "/about", "/css/**", "/js/**","/images/**").permitAll()
-                        .requestMatchers("/checkout/**", "/orders/**", "/profile/**", "/api/cart/").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                        .requestMatchers("/checkout/**", "/orders/**", "/profile/**", "/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
