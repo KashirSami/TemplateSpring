@@ -21,14 +21,17 @@ import java.nio.file.Path;
 @Configuration
 public class FirebaseConfig {
 
+
     @PostConstruct
     public void initialize() {
+
         try {
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseOptions.Builder builder = FirebaseOptions.builder();
 
                 String jsonContent = System.getenv("FIREBASE_CONFIG");
                 String path = System.getenv("FIREBASE_CONFIG_PATH");
+
                 InputStream credentialsStream;
 
                 if (jsonContent != null && !jsonContent.isBlank()) {

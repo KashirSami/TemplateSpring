@@ -64,8 +64,6 @@ async function fetchServerCart() {
     }
 }
 // Función ejemplo para añadir un producto al carrito (usa localStorage para persistir temporalmente)
-const token = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-const header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 async function addToCart(item) {
     const cart = getCart();
     // Si el item ya existía, aumentamos cantidad; si no, lo agregamos con qty=1
@@ -79,8 +77,7 @@ async function addToCart(item) {
     try {
         await fetch('/api/cart/add', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json',
-            [header]: token},
+            headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({ productId: item.id, cantidad: item.quantity })
         });
     } catch (e) {
@@ -151,8 +148,7 @@ async function renderCart() {
             const newQty = parseInt(valueSpan.textContent) + 1;
             await fetch('/api/cart/update', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json',
-                [header]: token},
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({productId: id, cantidad: newQty})
             });
             renderCart();
