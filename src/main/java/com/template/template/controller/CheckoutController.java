@@ -29,8 +29,10 @@ public class CheckoutController {
 
     @Autowired
     private CartService cartService;
-    @Autowired private OrderService orderService;
-    @Autowired private UserService userService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private UserService userService;
 
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;

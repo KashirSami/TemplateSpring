@@ -6,10 +6,14 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.template.template.database.FirebaseRestLogin;
 import com.template.template.model.RegisterRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FirebaseAuthService {
+
+    @Autowired
+    private FirebaseRestLogin firebaseRestLogin;
 
     public String registerUser(RegisterRequest request) {
         // 1) Validar confirmaciones antes de enviar a Firebase
@@ -35,9 +39,6 @@ public class FirebaseAuthService {
             return "success";
 
         } catch (FirebaseAuthException e) {
-            // Imprime en consola para depurar:
-            System.out.println("FirebaseAuthException Code: " + e.getAuthErrorCode());
-            System.out.println("Mensaje completo: " + e.getMessage());
 
             // Mapea los posibles códigos de AuthErrorCode a tu mensaje de usuario
             switch (e.getAuthErrorCode()) {
@@ -58,7 +59,7 @@ public class FirebaseAuthService {
 
     }
     public boolean loginUser(String email, String password) throws FirebaseRestLogin.FirebaseRestLoginException {
-        return FirebaseRestLogin.loginWithEmailPassword(email, password);
+        return firebaseRestLogin.loginWithEmailPassword(email, password);
     }
 
 }

@@ -20,7 +20,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/css/**", "/js/**", "/images/**"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .requestMatchers("/", "/login", "/register", "/products","/favicon.ico","/error","/debug-auth", "/contact", "/about", "/css/**", "/js/**","/images/**").permitAll()
@@ -29,7 +30,14 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutRequestMatcher(new org.springframework.security.web.util.matcher.AntPathRequestMatcher("/logout", "GET"))
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            boolean isAdmin = authentication != null &&
+                                    authentication.getAuthorities().stream()
+                                            .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+                            String targetUrl = isAdmin ? "/" : "/login?logout";
+                            response.sendRedirect(targetUrl);
+                        })
                         .permitAll()
                 );
 

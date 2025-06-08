@@ -29,7 +29,6 @@ public class FireStorageServiceImpl implements FirebaseStorageService {
         ApiFuture<DocumentReference> added = firestore
                 .collection("productos")
                 .add(product);
-        System.out.println("Documento creado con ID: " + added.get().getId());
     }
 
     @Override

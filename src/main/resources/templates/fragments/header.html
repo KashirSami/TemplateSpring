@@ -22,8 +22,12 @@
 
 
     <div class="navbar-right">
-      <div th:unless="${session.userEmail}" class="login-button-container">
+      <div th:unless="${session.userEmail != null or session.userRole == 'ADMIN'}" class="login-button-container">
         <a th:href="@{/login}" class="btn">Iniciar sesión</a>
+      </div>
+
+      <div th:if="${session.userRole == 'ADMIN'}" class="login-button-container">
+        <a th:href="@{/logout}" class="btn">Cerrar sesión</a>
       </div>
 
       <div th:if="${session.userEmail}" class="cart-container">

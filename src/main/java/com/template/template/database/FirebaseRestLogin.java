@@ -2,6 +2,7 @@ package com.template.template.database;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -10,21 +11,16 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-
+@Service
 public class FirebaseRestLogin {
 
-    /**
-     * Intenta iniciar sesión contra Firebase REST.
-     * @param email    Correo del usuario.
-     * @param password Contraseña del usuario.
-     * @return true si credenciales correctas.
-     * @throws FirebaseRestLoginException si hubo un error de autenticación
-     */
-    public static boolean loginWithEmailPassword(String email, String password) throws FirebaseRestLoginException {
+    @Value("${firbase.apikey}")
+    private String apiKey;
+
+    public boolean loginWithEmailPassword(String email, String password) throws FirebaseRestLoginException {
         try {
-            String apiKey = "AIzaSyBiYqQFhr84FjuoXmdKNxe57AFuZNyV3Sk";
             URL url = new URL(
-                    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + apiKey
+                    "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + this.apiKey
             );
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
