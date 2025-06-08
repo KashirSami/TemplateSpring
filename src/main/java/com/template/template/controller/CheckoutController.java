@@ -38,6 +38,10 @@ public class CheckoutController {
     private String stripeSecretKey;
     @Value("${stripe.public.key}")
     private String stripePublicKey;
+    @Value("${url.check.success}")
+    private String checkSuccessUrl;
+    @Value("${url.checkout.cancel}")
+    private String checkoutCancelUrl;
 
     // 1) Muestra la vista /checkout con los ítems del carrito
     @GetMapping("/checkout")
@@ -87,8 +91,8 @@ public class CheckoutController {
         SessionCreateParams params = SessionCreateParams.builder()
                 .addAllLineItem(stripeItems)
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:8080/checkout/success?session_id={CHECKOUT_SESSION_ID}")
-                .setCancelUrl("http://localhost:8080/checkout/cancel")
+                .setSuccessUrl(checkSuccessUrl)
+                .setCancelUrl(checkoutCancelUrl)
                 .build();
 
         Session session = Session.create(params.toMap());

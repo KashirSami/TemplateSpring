@@ -9,9 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const stripe = Stripe(stripePublicKey);
+    const csrfToken = document.querySelector('meta[name="_csrf"]')?.getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.getAttribute('content');
     payBtn.addEventListener('click', async () => {
         try {
-            const res = await fetch('/checkout/create-session', { method: 'POST' });
+            const headers = {};
+            if (csrfToken && csrfHeader) {
+                headers[csrfHeader] = csrfToken;
+            }
+            const res = await fetch('/checkout/create-session', { method: 'POST', headers });
             const data = await res.json();
             if (!data.sessionId) {
                 console.error('No se recibió sessionId');
